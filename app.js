@@ -6,6 +6,12 @@ client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
+function endsWithStr(msg, str, content){
+  if(msg.content.endsWith(str)){
+    msg.channel.send(content);
+  }
+}
+
 client.on('message', msg => {
   switch ( msg.content ) {
     case 'ping':
@@ -49,6 +55,10 @@ client.on('message', msg => {
       break;
     default: ;
   }
+  endsWithStr(msg, '뭐임?', '네~ 알려드렸읍니다~');
+  endsWithStr(msg, '못참지', 'ㄹㅇㅋㅋ');
+  endsWithStr(msg, '못 참지', 'ㄹㅇㅋㅋ');
+
 });
 
 client.login(token.token);
