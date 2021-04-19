@@ -19,6 +19,7 @@ function includesStr(msg, str, content){
 
 client.on('message', msg => {
   if(msg.author.username == '숭의관 봇') return;
+  else if(msg.author.username == '꿀벌') return;
   switch ( msg.content ) {
     case '도움!':
       msg.reply(`
@@ -64,7 +65,14 @@ client.on('message', msg => {
     case '학집비?':
       msg.channel.send('네~ 비었습니다~');
       break;
+    case '프로필보기' :
+      msg.reply(msg.author.displayAvatarURL());
+      break;
+    case '테이블호출' :
+      const table = new Discord.MessageEmbed().setTitle("도움창제목이빈다").setColor('#A9A9F5').setDescription("도움창내용입니다");
+      msg.channel.send(table);
     default: ;
+    
   }
   endsWithStr(msg, '뭐임?', '네~ 알려드렸읍니다~');
   endsWithStr(msg, '못참지', 'ㄹㅇㅋㅋ');
