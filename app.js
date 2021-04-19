@@ -53,6 +53,12 @@ client.on('message', msg => {
       msg.react('<:20:757596978673877155>');
       msg.react('<:36:759268501910192129>');
       break;
+    case '프로필보기' :
+      msg.reply(message.author.displayAvatarURL());
+      break;
+    case '도움!' :
+      const table = new discord.MessageEmbed().setTitle("도움창제목이빈다").setColor('#A9A9F5').setDescription("도움창내용입니다");
+      msg.channel.send(table);
     default: ;
   }
   endsWithStr(msg, '뭐임?', '네~ 알려드렸읍니다~');
