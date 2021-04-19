@@ -11,11 +11,19 @@ function endsWithStr(msg, str, content){
     msg.channel.send(content);
   }
 }
+function includesStr(msg, str, content){
+  if(msg.content.includes(str)){
+    msg.channel.send(content);
+  }
+}
 
 client.on('message', msg => {
+  if(msg.author.username == '숭의관 봇') return;
   switch ( msg.content ) {
-    case 'ping':
-      msg.reply('Pong!');
+    case '도움!':
+      msg.reply(`
+        송수는?/ 학인이는?/ 꿀벌 입장~/ 꼴벌 입장~/ ???/ 따봉/ 떴다!/ 학집비?/ - 뭐임?/ - 못참지/ - 못 참지/ - ㄱ?/ - 기?/ -학집처-
+        `);
       break;
     case '송수는?':
       msg.channel.send('바보다!');
@@ -53,11 +61,17 @@ client.on('message', msg => {
       msg.react('<:20:757596978673877155>');
       msg.react('<:36:759268501910192129>');
       break;
+    case '학집비?':
+      msg.channel.send('네~ 비었습니다~');
+      break;
     default: ;
   }
   endsWithStr(msg, '뭐임?', '네~ 알려드렸읍니다~');
   endsWithStr(msg, '못참지', 'ㄹㅇㅋㅋ');
   endsWithStr(msg, '못 참지', 'ㄹㅇㅋㅋ');
+  endsWithStr(msg, 'ㄱ?', 'ㄱㄱ');
+  endsWithStr(msg, '기?', 'ㄱㄱ');
+  includesStr(msg, '학집처', '드가자~ 드가자~');
 
 });
 
