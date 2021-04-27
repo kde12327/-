@@ -11,6 +11,11 @@ function endsWithStr(msg, str, content){
     msg.channel.send(content);
   }
 }
+function startsWithdStr(msg, str, content){
+  if(msg.content.startsWith(str)){
+    msg.channel.send(content);
+  }
+}
 function includesStr(msg, str, content){
   if(msg.content.includes(str)){
     msg.channel.send(content);
@@ -72,7 +77,7 @@ client.on('message', msg => {
       const table = new Discord.MessageEmbed().setTitle("도움창제목이빈다").setColor('#A9A9F5').setDescription("도움창내용입니다");
       msg.channel.send(table);
     default: ;
-    
+
   }
   endsWithStr(msg, '뭐임?', '네~ 알려드렸읍니다~');
   endsWithStr(msg, '못참지', 'ㄹㅇㅋㅋ');
@@ -81,6 +86,14 @@ client.on('message', msg => {
   endsWithStr(msg, '기?', 'ㄱㄱ');
   includesStr(msg, '학집처', '드가자~ 드가자~');
 
+
+  if(msg.content.startsWith('질문:'))
+  {
+    let str = msg.content.split('질문: ')[1];
+    let choice = str.split('?');
+    console.log(choice)
+    msg.reply(choice[Math.floor(Math.random() * (choice.length - 1 - 0) + 0)].trim());
+  }
 });
 
 client.login(token.token);
