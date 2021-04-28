@@ -3,9 +3,9 @@ const client = new Discord.Client();
 const token = require("./token.json");
 const Sequelize = require('sequelize');
 
-const COINMAX = 3;
+const COINMAX = 3.1;
 const COINMIN = -3;
-const COININTERVAL = 300000;
+const COININTERVAL = 60000;
 const COINPREFIX = '!';
 
 // connect sqlite
@@ -48,24 +48,28 @@ client.on('ready', async function () {
   console.log(`Logged in as ${client.user.tag}!`);
   Coin.sync();
   User.sync();
-  try {
-    var [coin, created] = await Coin.findOrCreate({
-      where: {
-        id: 1
-      },
-      defaults: {
-        price: '100',
-      },
-    })
-    let timerId = setInterval(async () => {
-      coin.price = parseFloat(coin.price + coin.price * (Math.random() * (COINMAX - COINMIN) + COINMIN) / 100).toFixed(2);
-      await coin.save();
-    }, COININTERVAL);
-  } catch (e) {
-    console.log(e);
-  } finally {
 
-  }
+  let timerId = setInterval(async () => {
+    try {
+      var [coin, created] = await Coin.findOrCreate({
+        where: {
+          id: 1
+        },
+        defaults: {
+          price: '100',
+        },
+      })
+      var next = parseFloat(coin.price + coin.price * (Math.random() * (COINMAX - COINMIN) + COINMIN) / 100).toFixed(2);
+      coin.price = (next > 0) ? next: 0;
+      console.log('SEG coin price['+ new Date() +']: '+coin.price);
+      await coin.save();
+    } catch (e) {
+      console.log(e);
+    } finally {
+
+    }
+  }, COININTERVAL);
+
 
 
 
@@ -104,7 +108,7 @@ client.on('message', async (msg) => {
           coin: 0.0,
           average: 0.0,
         },
-      })
+      });
       var [coin, coinCreated] = await Coin.findOrCreate({
         where: {
           id: 1
@@ -112,7 +116,7 @@ client.on('message', async (msg) => {
         defaults: {
           price: '100',
         },
-      })
+      });
       user.username = author.username;
       await user.save();
 
@@ -130,9 +134,9 @@ client.on('message', async (msg) => {
         		{ name: '\u200B', value: '\u200B' },
         		{ name: '!코인', value: '코인의 현재 가격이 표시됩니다.', inline: true },
             { name: '\u200B', value: '\u200B' },
-        		{ name: '!매수 [수량]', value: '코인을 [수량]개 만큼 매수합니다.', inline: true },
+        		{ name: '!매수 [숫자|(0~100)%]', value: '코인을 [숫자|(0~100)%]개 만큼 매수합니다.', inline: true },
             { name: '\u200B', value: '\u200B' },
-            { name: '!매도 [수량]', value: '코인을 [수량]개 만큼 매도합니다.', inline: true },
+            { name: '!매도 [숫자|(0~100)%]', value: '코인을 [숫자|(0~100)%]개 만큼 매도합니다.', inline: true },
         	)
         msg.reply(exampleEmbed);
       }else if (command === '코인') {
@@ -147,11 +151,11 @@ client.on('message', async (msg) => {
         	.setDescription(msg.author, '님의 SEG 코인 계좌 정보 입니다.')
         	// .setThumbnail('https://i.imgur.com/wSTFkRM.png')
         	.addFields(
-        		{ name: '총 평가', value: user.balance + user.coin * coin.price + ' 원' },
+        		{ name: '총 평가', value: parseFloat(user.balance + user.coin * coin.price).toFixed(2) + ' 원' },
         		{ name: '\u200B', value: '\u200B' },
         		{ name: '잔고', value: parseFloat(user.balance).toFixed(2) + ' 원', inline: true },
         		{ name: '코인 수', value: user.coin + ' 개', inline: true },
-        		{ name: '수익(ROE)', value: (coin.price - user.average) * user.coin + ' 원', inline: true },
+        		{ name: '수익(ROE)', value: ((coin.price - user.average) * user.coin).toFixed(2) + ' 원 ('+ parseFloat(((coin.price - user.average) * user.coin).toFixed(2)/(user.average * user.coin) * 100).toFixed(2) +'%)', inline: true },
             { name: '\u200B', value: '\u200B' },
             { name: '평균 단가', value: parseFloat(user.average).toFixed(2) + ' 개', inline: true },
             { name: '\u200B', value: '\u200B' },
@@ -164,14 +168,29 @@ client.on('message', async (msg) => {
         var num = parseFloat(input);
 
         if(input.length !== 1){
-          msg.reply("잘못된 입력입니다. 명령어: !매수 [숫자]");
+          msg.reply("잘못된 입력입니다. 명령어: !매수 [숫자|(0~100)%]");
         }
-        else if(!parseFloat(input)){
-          msg.reply("잘못된 입력입니다. 명령어: !매수 [숫자]");
+        else if(input.toString().endsWith('%')){
+          var percent = parseFloat(input.toString().split('%')[0]);
+          if(percent > 100 || percent < 0){
+            msg.reply("잘못된 입력입니다. 명령어: !매수 [숫자|(0~100)%]");
+          }else if(user.balance === 0){
+            msg.reply("계좌에 잔고가 없습니다. 현재 잔고는 " + user.balance + "원 입니다.");
+          }else{
+            var num =  user.balance * (percent / 100) / coin.price;
+            user.balance = parseFloat(user.balance - (coin.price * num));
+            user.average = (user.average * user.coin + coin.price * num) / (user.coin + num)
+            user.coin = user.coin + num;
 
+
+            await user.save();
+            msg.reply("매수가 체결되었습니다. 현재 소지한 코인 수는 "+ user.coin+" 개 입니다." );
+          }
+        }else if(!parseFloat(input)){
+          msg.reply("잘못된 입력입니다. 명령어: !매수 [숫자|(0~100)%]");
 
         }else if(user.balance - (coin.price * num)<0){
-          msg.reply("잔고가 부족합니다. 현재 매수 가능 코인 수는 "+ parseFloat(user.balance / coin.price).toFixed(2)+" 개 입니다." );
+          msg.reply("잔고가 부족합니다. 현재 매수 가능 코인 수는 "+ parseFloat(user.balance / coin.price).toFixed(2) + " 개 입니다." );
 
         }else{
           user.balance = parseFloat(user.balance - (coin.price * num));
@@ -187,14 +206,30 @@ client.on('message', async (msg) => {
   		} else if (command === '매도') {
         var num = parseFloat(input);
         if(input.length !== 1){
-          msg.reply("잘못된 입력입니다. 명령어: !매도 [숫자]");
+          msg.reply("잘못된 입력입니다. 명령어: !매도 [숫자|(0~100)%]");
 
+        }
+        else if(input.toString().endsWith('%')){
+          var percent = parseFloat(input.toString().split('%')[0]);
+          if(percent > 100 || percent < 0){
+            msg.reply("잘못된 입력입니다. 명령어: !매도 [숫자|(0~100)%]");
+          }else if(user.coin === 0){
+            msg.reply("계좌에 코인이 없습니다. 현재 소지한 코인 수는 " + user.balance + " 개 입니다.");
+          }else{
+            var num =  user.coin * (percent / 100) / coin.price;
+            user.balance = parseFloat(user.balance + (coin.price * num));
+            user.coin = user.coin - num;
+
+
+            await user.save();
+            msg.reply("매도가 체결되었습니다. 현재 소지한 코인 수는 "+ user.coin+" 개 입니다." );
+          }
         }else if(!parseFloat(input)){
-          msg.reply("잘못된 입력입니다. 명령어: !매도 [숫자]");
+          msg.reply("잘못된 입력입니다. 명령어: !매도 [숫자|(0~100)%]");
 
 
         }else if(user.coin - num < 0){
-          msg.reply("잔고가 부족합니다. 현재 매도 가능 코인 수는 "+ user.coin+" 개 입니다." );
+          msg.reply("잔고가 부족합니다. 현재 매도 가능 코인 수는 "+ user.coin + " 개 입니다." );
 
         }else{
           user.balance = parseFloat(user.balance + (coin.price * num));
@@ -204,11 +239,30 @@ client.on('message', async (msg) => {
         }
 
 
-  			// [zeta]
+  		}else if (command === '리더보드') {
+        var users = await User.findAll();
+        var fields = [];
+
+        users.sort(function(a, b){
+          return parseFloat(b.balance + b.coin * coin.price).toFixed(2) - parseFloat(a.balance + a.coin * coin.price).toFixed(2);
+        });
+
+        users.forEach((_user, i) => {
+          fields.push({ name: (i + 1) + '등', value: _user.username + ' ' + parseFloat(_user.balance + _user.coin * coin.price).toFixed(2) + ' 원' , inline: true });
+          fields.push({ name: '\u200B', value: '\u200B' });
+        });
+
+
+
+
+        const exampleEmbed = new Discord.MessageEmbed()
+        	.setColor('#ffffff')
+        	.setTitle('리더보드')
+        	.setDescription('계좌 총 평가 현황입니다.')
+        	.addFields(fields);
+        msg.channel.send(exampleEmbed);
   		}
-      // else if (command === '') {
-  		// 	// [lambda]
-  		// } else if (command === 'removetag') {
+      // else if (command === 'removetag') {
   		// 	// [mu]
   		// }
     } catch (e) {
