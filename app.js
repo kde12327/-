@@ -177,10 +177,10 @@ client.on('message', async (msg) => {
           }else if(user.balance === 0){
             msg.reply("계좌에 잔고가 없습니다. 현재 잔고는 " + user.balance + "원 입니다.");
           }else{
-            var num =  user.balance * (percent / 100) / coin.price;
-            user.balance = parseFloat(user.balance - (coin.price * num));
-            user.average = (user.average * user.coin + coin.price * num) / (user.coin + num)
-            user.coin = user.coin + num;
+            var _num =  user.balance * (percent / 100) / coin.price;
+            user.balance = parseFloat(user.balance - (coin.price * _num));
+            user.average = (user.average * user.coin + coin.price * _num) / (user.coin + _num)
+            user.coin = user.coin + _num;
 
 
             await user.save();
@@ -216,9 +216,9 @@ client.on('message', async (msg) => {
           }else if(user.coin === 0){
             msg.reply("계좌에 코인이 없습니다. 현재 소지한 코인 수는 " + user.balance + " 개 입니다.");
           }else{
-            var num =  user.coin * (percent / 100) / coin.price;
-            user.balance = parseFloat(user.balance + (coin.price * num));
-            user.coin = user.coin - num;
+            var _num =  user.coin * (percent / 100);
+            user.balance = parseFloat(user.balance + (coin.price * _num));
+            user.coin = user.coin - _num;
 
 
             await user.save();
