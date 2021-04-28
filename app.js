@@ -61,6 +61,8 @@ client.on('ready', async function () {
       })
       var next = parseFloat(coin.price + coin.price * (Math.random() * (COINMAX - COINMIN) + COINMIN) / 100).toFixed(2);
       coin.price = (next > 0) ? next: 0;
+      var segchannel = client.channels.cache.get('836539076785078272');
+      segchannel.send('SEG coin price['+ new Date() +']: '+coin.price);
       console.log('SEG coin price['+ new Date() +']: '+coin.price);
       await coin.save();
     } catch (e) {
