@@ -346,5 +346,8 @@ client.on('message', async (msg) => {
     msg.reply(choice[Math.floor(Math.random() * (choice.length - 1 - 0) + 0)].trim());
   }
 });
-
-client.login(token.token);
+if(token.token){
+  client.login(token.token);
+}else{ //heroku
+  client.login(process.env.TOKEN);
+}
