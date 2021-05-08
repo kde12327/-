@@ -1,57 +1,66 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const token = require("./token.json");
-const Sequelize = require('sequelize');
+const Enmap = require("enmap");
+const fs = require("fs");
+const config = require("./config/config.json");
+const db = require("./models");
+// We also need to make sure we're attaching the config to the CLIENT so it's accessible everywhere!
+client.config = config;
+
 
 const COINMAX = 3.1;
 const COINMIN = -3;
 const COININTERVAL = 60000;
 const COINPREFIX = '!';
 
-// connect sqlite
-const sequelize = new Sequelize('database', 'user', 'password', {
-	host: 'localhost',
-	dialect: 'sqlite',
-	logging: false,
-	// SQLite only
-	storage: 'sqlitedb',
+
+
+// This loop reads the /events/ folder and attaches each event file to the appropriate event.
+fs.readdir("./events/", (err, files) => {
+  if (err) return console.error(err);
+  files.forEach(file => {
+    // If the file is not a JS file, ignore it (thanks, Apple)
+    if (!file.endsWith(".js")) return;
+    // Load the event file itself
+    const event = require(`./events/${file}`);
+    // Get just the event name from the file name
+    let eventName = file.split(".")[0];
+    // super-secret recipe to call events with all their proper arguments *after* the `client` var.
+    // without going into too many details, this means each event will be called with the client argument,
+    // followed by its "normal" arguments, like message, member, etc etc.
+    // This line is awesome by the way. Just sayin'.
+    client.on(eventName, event.bind(null, client));
+    delete require.cache[require.resolve(`./events/${file}`)];
+  });
 });
 
-const Coin = sequelize.define('coin', {
-	price: {
-		type: Sequelize.FLOAT,
-		unique: true,
-	},
+client.commands = new Enmap();
+
+fs.readdir("./commands/", (err, files) => {
+  if (err) return console.error(err);
+  files.forEach(file => {
+    if (!file.endsWith(".js")) return;
+    // Load the command file itself
+    let props = require(`./commands/${file}`);
+    // Get just the command name from the file name
+    let commandName = file.split(".")[0];
+    console.log(`Attempting to load command ${commandName}`);
+    // Here we simply store the whole thing in the command Enmap. We're not running it right now.
+    client.commands.set(commandName, props);
+  });
 });
 
-const User = sequelize.define('user', {
-  id:{
-    type: Sequelize.STRING,
-    unique: true,
-    primaryKey: true,
-  },
-	username: {
-		type: Sequelize.STRING,
-	},
-  balance: {
-    type: Sequelize.FLOAT,
-  },
-  coin: {
-    type: Sequelize.FLOAT,
-  },
-  average: {
-    type: Sequelize.FLOAT,
-  }
-});
 
 client.on('ready', async function () {
+  var sequelize = require('./models/index').sequelize;
+  sequelize.sync();
+
   console.log(`Logged in as ${client.user.tag}!`);
-  Coin.sync();
-  User.sync();
 
   let timerId = setInterval(async () => {
     try {
-      var [coin, created] = await Coin.findOrCreate({
+      var [coin, created] = await db.Coin.findOrCreate({
         where: {
           id: 1
         },
@@ -69,9 +78,6 @@ client.on('ready', async function () {
 
     }
   }, COININTERVAL);
-
-
-
 
 });
 
@@ -93,188 +99,6 @@ function includesStr(msg, str, content){
 
 client.on('message', async (msg) => {
   if(msg.author.bot) return;
-
-  if (msg.channel.name === 'seg-코인' && msg.content.startsWith(COINPREFIX)) {
-    var author = msg.author;
-    try{
-      var [user, userCreated] = await User.findOrCreate({
-        where: {
-          id: author.id,
-        },
-        defaults: {
-          id: author.id,
-          username: author.username,
-          balance: 1000,
-          coin: 0.0,
-          average: 0.0,
-        },
-      });
-      var [coin, coinCreated] = await Coin.findOrCreate({
-        where: {
-          id: 1
-        },
-        defaults: {
-          price: '100',
-        },
-      });
-      user.username = author.username;
-      await user.save();
-
-
-
-      const input = msg.content.slice(COINPREFIX.length).trim().split(' ');
-  		const command = input.shift();
-  		const commandArgs = input.join(' ');
-      if (command === '도움') {
-        const exampleEmbed = new Discord.MessageEmbed()
-        	.setColor('#0099ff')
-          .setTitle('도움말')
-        	.addFields(
-        		{ name: '!내정보', value: '자신의 정보가 표시됩니다.', inline: true},
-        		{ name: '\u200B', value: '\u200B' },
-        		{ name: '!코인', value: '코인의 현재 가격이 표시됩니다.', inline: true },
-            { name: '\u200B', value: '\u200B' },
-        		{ name: '!매수 [숫자|(0~100)%]', value: '코인을 [숫자|(0~100)%]개 만큼 매수합니다.', inline: true },
-            { name: '\u200B', value: '\u200B' },
-            { name: '!매도 [숫자|(0~100)%]', value: '코인을 [숫자|(0~100)%]개 만큼 매도합니다.', inline: true },
-        	)
-        msg.reply(exampleEmbed);
-      }else if (command === '코인') {
-        msg.channel.send("현재 SEG코인의 가격은 " +  coin.price +  "원 입니다.");
-
-  		} else if (command === '내정보') {
-        const exampleEmbed = new Discord.MessageEmbed()
-        	.setColor('#0099ff')
-        	.setTitle('내 정보')
-        	.setURL(msg.author.displayAvatarURL())
-        	.setAuthor(author.username, msg.author.displayAvatarURL())
-        	.setDescription(msg.author, '님의 SEG 코인 계좌 정보 입니다.')
-        	// .setThumbnail('https://i.imgur.com/wSTFkRM.png')
-        	.addFields(
-        		{ name: '총 평가', value: parseFloat(user.balance + user.coin * coin.price).toFixed(2) + ' 원' },
-        		{ name: '\u200B', value: '\u200B' },
-        		{ name: '잔고', value: parseFloat(user.balance).toFixed(2) + ' 원', inline: true },
-        		{ name: '코인 수', value: user.coin + ' 개', inline: true },
-        		{ name: '수익(ROE)', value: ((coin.price - user.average) * user.coin).toFixed(2) + ' 원 ('+ parseFloat(((coin.price - user.average) * user.coin).toFixed(2)/(user.average * user.coin) * 100).toFixed(2) +'%)', inline: true },
-            { name: '\u200B', value: '\u200B' },
-            { name: '평균 단가', value: parseFloat(user.average).toFixed(2) + ' 개', inline: true },
-            { name: '\u200B', value: '\u200B' },
-            { name: '매수가능', value: parseFloat(user.balance / coin.price).toFixed(2) + ' 개', inline: true },
-            { name: '매도가능', value: user.coin + ' 개', inline: true },
-
-        	)
-        msg.reply(exampleEmbed);
-  		} else if (command === '매수') {
-        var num = parseFloat(input);
-
-        if(input.length !== 1){
-          msg.reply("잘못된 입력입니다. 명령어: !매수 [숫자|(0~100)%]");
-        }
-        else if(input.toString().endsWith('%')){
-          var percent = parseFloat(input.toString().split('%')[0]);
-          if(percent > 100 || percent < 0){
-            msg.reply("잘못된 입력입니다. 명령어: !매수 [숫자|(0~100)%]");
-          }else if(user.balance === 0){
-            msg.reply("계좌에 잔고가 없습니다. 현재 잔고는 " + user.balance + "원 입니다.");
-          }else{
-            var num =  user.balance * (percent / 100) / coin.price;
-            user.balance = parseFloat(user.balance - (coin.price * num));
-            user.average = (user.average * user.coin + coin.price * num) / (user.coin + num)
-            user.coin = user.coin + num;
-
-
-            await user.save();
-            msg.reply("매수가 체결되었습니다. 현재 소지한 코인 수는 "+ user.coin+" 개 입니다." );
-          }
-        }else if(!parseFloat(input)){
-          msg.reply("잘못된 입력입니다. 명령어: !매수 [숫자|(0~100)%]");
-
-        }else if(user.balance - (coin.price * num)<0){
-          msg.reply("잔고가 부족합니다. 현재 매수 가능 코인 수는 "+ parseFloat(user.balance / coin.price).toFixed(2) + " 개 입니다." );
-
-        }else{
-          user.balance = parseFloat(user.balance - (coin.price * num));
-          user.average = (user.average * user.coin + coin.price * num) / (user.coin + num)
-          user.coin = user.coin + num;
-
-
-          await user.save();
-          msg.reply("매수가 체결되었습니다. 현재 소지한 코인 수는 "+ user.coin+" 개 입니다." );
-        }
-
-  			// [zeta]
-  		} else if (command === '매도') {
-        var num = parseFloat(input);
-        if(input.length !== 1){
-          msg.reply("잘못된 입력입니다. 명령어: !매도 [숫자|(0~100)%]");
-
-        }
-        else if(input.toString().endsWith('%')){
-          var percent = parseFloat(input.toString().split('%')[0]);
-          if(percent > 100 || percent < 0){
-            msg.reply("잘못된 입력입니다. 명령어: !매도 [숫자|(0~100)%]");
-          }else if(user.coin === 0){
-            msg.reply("계좌에 코인이 없습니다. 현재 소지한 코인 수는 " + user.balance + " 개 입니다.");
-          }else{
-            var num =  user.coin * (percent / 100) / coin.price;
-            user.balance = parseFloat(user.balance + (coin.price * num));
-            user.coin = user.coin - num;
-
-
-            await user.save();
-            msg.reply("매도가 체결되었습니다. 현재 소지한 코인 수는 "+ user.coin+" 개 입니다." );
-          }
-        }else if(!parseFloat(input)){
-          msg.reply("잘못된 입력입니다. 명령어: !매도 [숫자|(0~100)%]");
-
-
-        }else if(user.coin - num < 0){
-          msg.reply("잔고가 부족합니다. 현재 매도 가능 코인 수는 "+ user.coin + " 개 입니다." );
-
-        }else{
-          user.balance = parseFloat(user.balance + (coin.price * num));
-          user.coin = user.coin - num;
-          await user.save();
-          msg.reply("매도가 체결되었습니다. 현재 소지한 코인 수는 "+ user.coin + " 개 입니다." );
-        }
-
-
-  		}else if (command === '리더보드') {
-        var users = await User.findAll();
-        var fields = [];
-
-        users.sort(function(a, b){
-          return parseFloat(b.balance + b.coin * coin.price).toFixed(2) - parseFloat(a.balance + a.coin * coin.price).toFixed(2);
-        });
-
-        users.forEach((_user, i) => {
-          fields.push({ name: (i + 1) + '등', value: _user.username + ' ' + parseFloat(_user.balance + _user.coin * coin.price).toFixed(2) + ' 원' , inline: true });
-          fields.push({ name: '\u200B', value: '\u200B' });
-        });
-
-
-
-
-        const exampleEmbed = new Discord.MessageEmbed()
-        	.setColor('#ffffff')
-        	.setTitle('리더보드')
-        	.setDescription('계좌 총 평가 현황입니다.')
-        	.addFields(fields);
-        msg.channel.send(exampleEmbed);
-  		}
-      // else if (command === 'removetag') {
-  		// 	// [mu]
-  		// }
-    } catch (e) {
-      console.log(e);
-    } finally {
-
-    }
-
-
-	}
-
-
 
   switch ( msg.content ) {
     case '도움!':
@@ -347,4 +171,4 @@ client.on('message', async (msg) => {
   }
 });
 
-client.login(token.token);
+client.login(token.token_test);
