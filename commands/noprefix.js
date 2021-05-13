@@ -66,13 +66,6 @@ exports.run = async (client, message, [action, volume]) => {
     case '학집비?':
       message.channel.send('네~ 비었습니다~');
       break;
-    case '프로필보기' :
-      message.reply(message.author.displayAvatarURL());
-      break;
-    case '테이블호출' :
-      const table = new Discord.MessageEmbed().setTitle("도움창제목이빈다").setColor('#A9A9F5').setDescription("도움창내용입니다");
-      message.channel.send(table);
-      break;
     default: ;
 
   }
