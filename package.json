@@ -5,7 +5,10 @@
   "main": "app.js",
   "dependencies": {
     "discord.js": "^12.5.3",
+    "enmap": "^5.8.5",
+    "request-promise": "^4.2.6",
     "sequelize": "^6.6.2",
+    "sequelize-cli": "^6.2.0",
     "sqlite3": "^5.0.2"
   },
   "devDependencies": {},
