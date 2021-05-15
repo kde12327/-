@@ -205,9 +205,9 @@ function ScoreCard(){
         (
           indexs.length == 2
           && (
-            (_arr.indexOf(0) == 4 && _arr.indexOf(0) == 5)
-            || (_arr.indexOf(0) == 0 && _arr.indexOf(0) == 5)
-            || (_arr.indexOf(0) == 0 && _arr.indexOf(0) == 1)
+            (_arr.indexOf(0) == 4 && _arr.indexOf(0, 5) == 5)
+            || (_arr.indexOf(0) == 0 && _arr.indexOf(0, 1) == 5)
+            || (_arr.indexOf(0) == 0 && _arr.indexOf(0, 1) == 1)
           )
         )
         || JSON.stringify(_arr) === JSON.stringify([1, 1, 1, 1, 1, 0])
@@ -332,7 +332,7 @@ exports.run = async (client, message, [action, args]) => {
   for(var turn = 1; turn < 13; turn ++){
 
     for(var playerIdx = 0; playerIdx < game.player.length; playerIdx ++){
-      
+
       var enrollFlag = false;
       var player = game.player[playerIdx];
       var dices = new Dices();
