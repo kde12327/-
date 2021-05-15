@@ -87,7 +87,7 @@ function scoreBoardString(game){
       { name: `#5: Fives 5️⃣`, value: `점수: ${ showScore(game, 4)}`, inline: true },
       { name: `#6: Sixes 6️⃣`, value: `점수: ${ showScore(game, 5)}`, inline: true },
       { name: `1-6 보너스!🍀`, value: `점수:${ showBonusScore(game)}`, inline: false },
-      { name: `#7: Chance🃏`, value: `점수: ${ showScore(game, 6)}`, inline: true },
+      { name: `#7: Choice🃏`, value: `점수: ${ showScore(game, 6)}`, inline: true },
       { name: `#8: Four of a Kind🔢`, value: `점수: ${ showScore(game, 7)}`, inline: true },
       { name: `#9: Full House🏘️`, value: `점수: ${ showScore(game, 8)}`, inline: true },
       { name: `#10: Small Straight🔡`, value: `점수: ${ showScore(game, 9)}`, inline: true },
