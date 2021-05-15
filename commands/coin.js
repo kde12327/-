@@ -6,6 +6,8 @@ const COINMAX = 3.1;
 const COINMIN = -3;
 
 exports.run = async (client, message, [action, volume]) => {
+  if(message.channel.name === "seg-코인") return;
+
   var author = message.author;
   try{
     var [user, userCreated] = await db.User.findOrCreate({

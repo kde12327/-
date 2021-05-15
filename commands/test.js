@@ -18,7 +18,7 @@ function includesStr(message, str, content){
   }
 }
 
-exports.run = async (client, message, [action, volume]) => {
+exports.run = async (client, message, [action, args]) => {
   if(message.author.bot) return;
   var author = message.author;
   var msgtext = message.content.split("test")[1].trim();
@@ -67,6 +67,9 @@ exports.run = async (client, message, [action, volume]) => {
         stopFlag = true;
         exit = true;
       });
+  }else if(msgtext.startsWith('emoji')) {
+    console.log(client)
+    message.reply(args);
   }
 
 };
