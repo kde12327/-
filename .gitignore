@@ -117,3 +117,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 sqlitedb
+sqlitedb.db

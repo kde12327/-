@@ -14,7 +14,7 @@ const sequelize = new Sequelize('database', 'user', 'password', {
 	dialect: 'sqlite',
 	logging: false,
 	// SQLite only
-	storage: 'sqlitedb',
+	storage: 'sqlitedb.db',
 });
 
 fs

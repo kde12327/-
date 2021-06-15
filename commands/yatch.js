@@ -244,6 +244,52 @@ exports.run = async (client, message, [action, args]) => {
   game.player = [];
   game.player.push(message.author);
 
+  if(action == "랭킹" || action == "rank" || action == "ranking"){
+    try {
+      const logs = await db.YatchLog.findAll({
+        include: [
+          {
+            model: db.User,
+          }
+        ],
+        limit: 10,
+        order: [['score', 'DESC']]
+      })
+      const _rankEmbed = new Discord.MessageEmbed()
+        .setColor('#0099ff')
+        .setTitle('전체 랭킹 top 10')
+
+      for(var i = 0; i < logs.length; i++){
+        _rankEmbed.addField(`${i+1}등: ${logs[i].User.username}`, `점수: ${logs[i].score}`, true);
+      }
+      message.reply(_rankEmbed)
+
+    } catch (e) {
+      console.log(e)
+    }
+    return;
+  }
+  console.log(action)
+  if(action != undefined){return;}
+
+  // get user from db
+  var author = message.author;
+  try{
+    var [user, userCreated] = await db.User.findOrCreate({
+      where: {
+        id: author.id,
+      },
+      defaults: {
+        id: author.id,
+        username: author.username,
+        balance: 1000,
+        coin: 0.0,
+        average: 0.0,
+      },
+    });
+  }catch(error){
+    console.log(error)
+  }
 
   var exit = false;
   var start = false;
@@ -505,6 +551,20 @@ exports.run = async (client, message, [action, args]) => {
   }
   // 점수 집계 or 등수
   yatchmsg.delete();
+  try {
+    game.player.forEach(async (p, i) => {
+      await db.YatchLog.create({
+        score: p.scoreCard.overall(),
+        date: new Date(),
+        createAt: new Date(),
+        updateAt: new Date(),
+        UserId: p.id,
+      })
+    });
+
+  } catch (e) {
+
+  }
   var resultmsg = await message.channel.send(resultString(game)).then(msg =>{
     return msg;
   });

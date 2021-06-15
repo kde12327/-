@@ -1,4 +1,6 @@
-module.exports = (client, message) => {
+const db = require('../models');
+
+module.exports = async (client, message) => {
   // Ignore all bots
   if (message.author.bot) return;
 
@@ -13,7 +15,6 @@ module.exports = (client, message) => {
     return;
   }
 
-
   // Grab the command data from the client.commands Enmap
   const cmd = client.commands.get(command);
 
@@ -21,6 +22,26 @@ module.exports = (client, message) => {
   if (!cmd) {
     return;
   }
+
+  // When use command add user.
+  var author = message.author;
+  try{
+    var [user, userCreated] = await db.User.findOrCreate({
+      where: {
+        id: author.id,
+      },
+      defaults: {
+        id: author.id,
+        username: author.username,
+        balance: 1000,
+        coin: 0.0,
+        average: 0.0,
+      },
+    });
+  }catch(error){
+    console.log(error)
+  }
+
   // Run the command
   cmd.run(client, message, args);
 };
