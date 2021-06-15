@@ -135,7 +135,7 @@ function Dices(){
 }
 
 function ScoreCard(){
-  this.scoreStr = ['Ones', 'Tows', 'Threes', 'Fours', 'Fives', 'Sixes', 'Choice', 'FourCard', 'FullHouse', 'S.Straight', 'L.Straight', 'Yatch'];
+  this.scoreStr = ['Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes', 'Choice', 'FourCard', 'FullHouse', 'S.Straight', 'L.Straight', 'Yatch'];
   this.score = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   this.scoreCheck = [false, false, false, false, false, false, false, false, false, false, false, false];
   this.bonusScore = 0;
