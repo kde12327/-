@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 const db = require('../models');
 const scoreEmoji = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '🃏', '🔢', '🏘️', '🔡', '🔠', '🎲'];
-const yatchEmoji = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '🔁', '🔴', '↩️'];
+const yachtEmoji = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '🔁', '🔴', '↩️'];
 
 function showPlayerReadyString(game){
   var str = ""
@@ -135,7 +135,7 @@ function Dices(){
 }
 
 function ScoreCard(){
-  this.scoreStr = ['Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes', 'Choice', 'FourCard', 'FullHouse', 'S.Straight', 'L.Straight', 'Yatch'];
+  this.scoreStr = ['Ones', 'Twos', 'Threes', 'Fours', 'Fives', 'Sixes', 'Choice', 'FourCard', 'FullHouse', 'S.Straight', 'L.Straight', 'Yacht'];
   this.score = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   this.scoreCheck = [false, false, false, false, false, false, false, false, false, false, false, false];
   this.bonusScore = 0;
@@ -238,7 +238,7 @@ function ScoreCard(){
 }
 
 exports.run = async (client, message, [action, args]) => {
-  if(message.channel.name !== "yatch") return;
+  if(message.channel.name !== "yacht") return;
   if(message.author.bot) return;
   var game = {};
   game.player = [];
@@ -351,7 +351,7 @@ exports.run = async (client, message, [action, args]) => {
     joinmsg.reactions.removeAll()
   ]);
 
-  const yatchFilter = (reaction, user) => {
+  const yachtFilter = (reaction, user) => {
     return ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','🔁','🔴','↩️'].includes(reaction.emoji.name) && user.id !== client.user.id;
   };
   const scoreFilter = (reaction, user) => {
@@ -362,18 +362,18 @@ exports.run = async (client, message, [action, args]) => {
     return msg;
   });
 
-  var yatchmsg = await message.channel.send("로딩중 ...").then(msg =>{
+  var yachtmsg = await message.channel.send("로딩중 ...").then(msg =>{
     return msg;
   });
   await Promise.all([
-    yatchmsg.react('1️⃣'),
-    yatchmsg.react('2️⃣'),
-    yatchmsg.react('3️⃣'),
-    yatchmsg.react('4️⃣'),
-    yatchmsg.react('5️⃣'),
-    yatchmsg.react('🔁'), //주사위 굴리기
-    yatchmsg.react('🔴'), //점수 바로 등록하기
-    yatchmsg.react('↩️'), //점수 바로 등록하기
+    yachtmsg.react('1️⃣'),
+    yachtmsg.react('2️⃣'),
+    yachtmsg.react('3️⃣'),
+    yachtmsg.react('4️⃣'),
+    yachtmsg.react('5️⃣'),
+    yachtmsg.react('🔁'), //주사위 굴리기
+    yachtmsg.react('🔴'), //점수 바로 등록하기
+    yachtmsg.react('↩️'), //점수 바로 등록하기
   ]);
   for(var turn = 1; turn < 13; turn ++){
 
@@ -385,18 +385,18 @@ exports.run = async (client, message, [action, args]) => {
       if(turn != 1){
         var waitmsg = await message.channel.send("대기...").then(msg =>{
           return msg;
-        });yatchEmoji
-        for(var i = 0; i < yatchEmoji.length; i++){
-          var users = yatchmsg.reactions.resolve(yatchEmoji[i]).users;
+        });yachtEmoji
+        for(var i = 0; i < yachtEmoji.length; i++){
+          var users = yachtmsg.reactions.resolve(yachtEmoji[i]).users;
           if(users.resolve(player.id)){
-            await yatchmsg.reactions.resolve(yatchEmoji[i]).users.remove(player.id);
+            await yachtmsg.reactions.resolve(yachtEmoji[i]).users.remove(player.id);
           }
         }
         waitmsg.delete();
       }
       for(var chance = 2; chance >= 0; chance--){
         dices.reRoll();
-        await yatchmsg.edit(playerTurnChanceString(game, playerIdx, turn, chance)  + "\n\n" +diceString(game, dices));
+        await yachtmsg.edit(playerTurnChanceString(game, playerIdx, turn, chance)  + "\n\n" +diceString(game, dices));
         if(chance == 0) break;
         stopFlag = false;
         if(chance != 2){
@@ -406,14 +406,14 @@ exports.run = async (client, message, [action, args]) => {
           // waitmsg.delete();
 
           await Promise.all([
-            yatchmsg.reactions.resolve('🔁').users.remove(player.id),
+            yachtmsg.reactions.resolve('🔁').users.remove(player.id),
           ]);
           waitmsg.delete();
         }
 
         while(!stopFlag){
 
-          await yatchmsg.awaitReactions(yatchFilter, { max: 1, time: 60000, errors: ['time'] })
+          await yachtmsg.awaitReactions(yachtFilter, { max: 1, time: 60000, errors: ['time'] })
             .then(async function(data) {
               const reaction = data.first();
               if (reaction.emoji.name === '1️⃣') {
@@ -436,11 +436,11 @@ exports.run = async (client, message, [action, args]) => {
                 dices.locks = [false, false, false, false, false]
                 var _waitmsg = await message.channel.send("대기...").then(msg =>{
                   return msg;
-                });yatchEmoji
-                for(var i = 0; i < yatchEmoji.length; i++){
-                  var users = yatchmsg.reactions.resolve(yatchEmoji[i]).users;
+                });yachtEmoji
+                for(var i = 0; i < yachtEmoji.length; i++){
+                  var users = yachtmsg.reactions.resolve(yachtEmoji[i]).users;
                   if(users.resolve(player.id)){
-                    await yatchmsg.reactions.resolve(yatchEmoji[i]).users.remove(player.id);
+                    await yachtmsg.reactions.resolve(yachtEmoji[i]).users.remove(player.id);
                   }
                 }
                 _waitmsg.delete();
@@ -450,7 +450,7 @@ exports.run = async (client, message, [action, args]) => {
 
 
             });
-            await yatchmsg.edit(playerTurnChanceString(game, playerIdx, turn, chance)  + "\n\n" +diceString(game, dices));
+            await yachtmsg.edit(playerTurnChanceString(game, playerIdx, turn, chance)  + "\n\n" +diceString(game, dices));
         }
         if(enrollFlag) break;
 
@@ -550,7 +550,7 @@ exports.run = async (client, message, [action, args]) => {
 
   }
   // 점수 집계 or 등수
-  yatchmsg.delete();
+  yachtmsg.delete();
   try {
     game.player.forEach(async (p, i) => {
       await db.YatchLog.create({
