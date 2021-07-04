@@ -346,10 +346,33 @@ exports.run = async (client, message, [action, args]) => {
   }
   if(exit) return;
   joinmsg.edit(showPlayerReadyString(game)+'\n----------------');
-
+  
   await Promise.all([
     joinmsg.reactions.removeAll()
   ]);
+
+  await joinmsg.react('🔴');
+
+  const stopFilter = (reaction, user) => {
+    return  ['🔴'].includes(reaction.emoji.name);
+  };
+
+  joinmsg.awaitReactions(stopFilter, { max: 1, time: 1200000, errors: ['time'] })
+  .then(async function(data) {
+    const reaction = data.first();
+    if (reaction.emoji.name === '🔴') {
+      console.log(1)
+      reaction.users.cache.each(user => {
+        if(user == message.author && !user.bot){
+          joinmsg.edit('게임이 중지되었습니다.');
+          yachtmsg.delete()
+          waitmsg.delete()
+          scoremsg.delete()
+          scoreWaitmsg.delete()
+        }
+      });
+    }
+  });
 
   const yachtFilter = (reaction, user) => {
     return ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','🔁','🔴','↩️'].includes(reaction.emoji.name) && user.id !== client.user.id;
@@ -549,6 +572,11 @@ exports.run = async (client, message, [action, args]) => {
 
 
   }
+
+  await Promise.all([
+    joinmsg.reactions.removeAll()
+  ]);
+
   // 점수 집계 or 등수
   yachtmsg.delete();
   try {
