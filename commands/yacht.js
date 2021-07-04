@@ -365,10 +365,12 @@ exports.run = async (client, message, [action, args]) => {
       reaction.users.cache.each(user => {
         if(user == message.author && !user.bot){
           joinmsg.edit('게임이 중지되었습니다.');
-          yachtmsg.delete()
-          waitmsg.delete()
-          scoremsg.delete()
-          scoreWaitmsg.delete()
+          if(yachtmsg)yachtmsg.delete()
+          if(waitmsg)waitmsg.delete()
+          if(waitmsg)waitmsg.delete()
+          if(scoremsg)scoremsg.delete()
+          if(scoreWaitmsg)scoreWaitmsg.delete()
+
         }
       });
     }
