@@ -22,6 +22,13 @@ exports.run = async (client, message, [action, args]) => {
   if(message.author.bot) return;
   var author = message.author;
   var msgtext = message.content.split("test")[1].trim();
+
+  if(action == "DM"){
+    author.send('<content>');
+    author.send(`Hi, ${author}.`);
+    author.send('Hi, <@user id>.');
+  }
+
   switch ( msgtext ) {
     case '프로필보기' :
       message.reply(message.author.displayAvatarURL());
