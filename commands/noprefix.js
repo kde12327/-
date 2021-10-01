@@ -66,6 +66,23 @@ exports.run = async (client, message, [action, volume]) => {
     case '학집비?':
       message.channel.send('네~ 비었습니다~');
       break;
+    case '가테영웅뽑기':
+      var msgstr = "";
+      for(let i = 0; i < 10; i++){
+        let r = Math.random();
+        if(r < 0.0275){
+          msgstr += ":white_large_square: ";
+        }else if(r < 0.2175){
+          msgstr += ":yellow_square: ";
+        }else {
+          msgstr += ":green_square: ";
+        }
+        if(i == 4){
+          msgstr += "\n\n";
+        }
+      }
+      message.channel.send(msgstr);
+      break;
     default: ;
 
   }
