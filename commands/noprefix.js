@@ -67,12 +67,47 @@ exports.run = async (client, message, [action, volume]) => {
       message.channel.send('네~ 비었습니다~');
       break;
     case '가테영웅뽑기':
+      var resultList = [];
       var msgstr = "";
+      var allGreenBoxFlag = true;
       for(let i = 0; i < 10; i++){
         let r = Math.random();
         if(r < 0.0275){
-          msgstr += ":white_large_square: ";
+          resultList.push(3);
+          allGreenBoxFlag = false;
         }else if(r < 0.2175){
+          resultList.push(2);
+          allGreenBoxFlag = false;
+        }else {
+          resultList.push(1);
+        }
+      }
+      if(allGreenBoxFlag){
+        var min = 0;
+        var max = 10;
+        var value =  Math.floor(Math.random() * (max - min)) + min;
+        resultList[value] = 2;
+      }
+      var hec = 0;
+      for(let i = 0; i < 10; i++){
+        let v = resultList[i];
+        if(v == 3){
+          hec += 50;
+        }else if(v == 2){
+          hec += 8;
+        }else {
+          hec += 1;
+        }
+      }
+      msgstr += "히어로크리스탈: " + hec;
+
+      msgstr += "\n";
+
+      for(let i = 0; i < 10; i++){
+        let v = resultList[i];
+        if(v == 3){
+          msgstr += ":white_large_square: ";
+        }else if(v == 2){
           msgstr += ":yellow_square: ";
         }else {
           msgstr += ":green_square: ";
@@ -81,7 +116,7 @@ exports.run = async (client, message, [action, volume]) => {
           msgstr += "\n\n";
         }
       }
-      message.channel.send(msgstr);
+      message.reply(msgstr);
       break;
     default: ;
 
