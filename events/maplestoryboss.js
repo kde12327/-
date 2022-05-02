@@ -162,9 +162,9 @@ module.exports = async (client, message) => {
 
 
 
-      var segcjannel = client.channels.cache.get('968815702280650752');
+      var segcjannel = client.channels.cache.get('970733359053541396');
       if(!segcjannel){
-        segcjannel = client.channels.cache.get('970733359053541396');
+        segcjannel = client.channels.cache.get('968815702280650752');
       }
       var bossApearMessage = await segcjannel.send(boss.bossAppearMessageText());
       await Promise.all([
