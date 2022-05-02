@@ -845,7 +845,7 @@ exports.run = async (client, message, [action, args]) => {
       //     username: author.username,
       //     level: 10,
       //     redcube: 20,
-      //     internalflame: 20,
+      //     eternalflame: 20,
       //   },
       // });
       if(user){
@@ -901,7 +901,7 @@ exports.run = async (client, message, [action, args]) => {
           username: author.username,
           level: 10,
           redcube: 20,
-          internalflame: 20,
+          eternalflame: 20,
           MJobId: jobId,
         });
         items = []
