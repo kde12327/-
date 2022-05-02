@@ -3,6 +3,8 @@ const db = require("../models");
 
 
 const COININTERVAL = 60000;
+const MAPLEINTERVAL = 60000;
+
 // const COINMAX = 3.1;
 // const COINMIN = -3;
 
@@ -13,7 +15,7 @@ module.exports = (client, message) => {
 
   console.log(`Logged in as ${client.user.tag}!`);
 
-  let timerId = setInterval(async () => {
+  let coinTimerId = setInterval(async () => {
     try {
       var [coin, created] = await db.Coin.findOrCreate({
         where: {
@@ -39,4 +41,9 @@ module.exports = (client, message) => {
 
     }
   }, COININTERVAL);
+
+  let mapleTimerId = setInterval(async () => {
+    client.emit('maplestoryboss');
+
+  }, MAPLEINTERVAL);
 };

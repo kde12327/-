@@ -1,3 +1,57 @@
 {
-    "prefix": "!"
+    "prefix": "!",
+
+    "development": {
+
+      "username": "user",
+
+      "password": "password@#",
+
+      "database": "database",
+
+      "host": "127.0.0.1",
+
+      "dialect": "sqlite",
+
+      "logging": false,
+
+    	"storage": "sqlitedb_0.0.1.db"
+
+  },
+
+  "test": {
+
+    "username": "user",
+
+    "password": "password@#",
+
+    "database": "database",
+
+    "host": "127.0.0.1",
+
+    "dialect": "sqlite",
+
+    "logging": false,
+
+    "storage": "sqlitedb_0.0.1.db"
+
+  },
+
+  "production": {
+
+    "username": "user",
+
+    "password": "password@#",
+
+    "database": "database",
+
+    "host": "127.0.0.1",
+
+    "dialect": "sqlite",
+
+    "logging": false,
+
+    "storage": "sqlitedb_0.0.1.db"
+
+  }
 }
