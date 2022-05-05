@@ -295,7 +295,7 @@ function itemStat(item)
         luk += 5;
         break;
       case "몬스터 방어율 무시 : +15%":
-        penet += penet + (100 - penet) * 0.15;
+        penet += (100 - penet) * 0.15;
         break;
       case "STR : +6%":
         strp += 6;
@@ -358,7 +358,7 @@ function itemStat(item)
         lukp += 6;
         break;
       case "몬스터 방어율 무시 : +30%":
-        penet += penet + (100 - penet) * 0.30;
+        penet += (100 - penet) * 0.30;
         break;
       case "보스 몬스터 공격 시 데미지 : +30%":
         bossdmg += 30;
@@ -394,10 +394,10 @@ function itemStat(item)
         lukp += 9;
         break;
       case "몬스터 방어율 무시 : +35%":
-        penet += penet + (100 - penet) * 0.35;
+        penet += (100 - penet) * 0.35;
         break;
       case "몬스터 방어율 무시 : +40%":
-        penet += penet + (100 - penet) * 0.40;
+        penet += (100 - penet) * 0.40;
         break;
       case "보스 몬스터 공격 시 데미지 : +35%":
         bossdmg += 35;
@@ -467,7 +467,7 @@ function getPlayerStat(items, job){
     matkp += itemStats["matkp"];
     dmg += itemStats["dmg"];
     bossdmg += itemStats["bossdmg"];
-    penet = penet + (100 - penet) * itemStats["penet"] / 100;
+    penet += (100 - penet) * itemStats["penet"] / 100;
     crip += itemStats["crip"];
   });
 
