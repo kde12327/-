@@ -7,6 +7,10 @@ const MAPLEBOSSAPEARPERCENTAGE = 1 / 30;
 
 const TIMELIMIT = 30 * 60 * 1000;
 
+const emoji_eternalrebirthflame = "<:eternalrebirthflame:971656195855241227>";
+const emoji_redcube = "<:redcube:971655681730035722>";
+
+
 module.exports = async (client, message) => {
   var sequelize = require('../models/index').sequelize;
   sequelize.sync();
@@ -14,7 +18,8 @@ module.exports = async (client, message) => {
     try {
 
       var _rand = Math.random();
-      bossHp = 4000 + Math.floor(Math.pow(_rand, 5) * 100000);
+      bossHp = 20000 + Math.floor(Math.pow(_rand, 2) * 100000);
+      // bossHp = 2709 +  1; // test
 
 
 
@@ -31,21 +36,20 @@ module.exports = async (client, message) => {
         rewardText: function(){
           var text = "개인 보상 (첫타, 딜 1등은 보상 두배) : \n";
           if(this.reward.redCube > 0){
-            text += "---레드 큐브: " + this.reward.redCube + "개\n";
+            text += "---" + emoji_redcube + "레드 큐브: " + this.reward.redCube + "개\n";
           }
           if(this.reward.eternalFlame > 0){
-            text += "---영원한 환생의 불꽃: " + this.reward.eternalFlame + "개\n";
+            text += "---" + emoji_eternalrebirthflame + "영원한 환생의 불꽃: " + this.reward.eternalFlame + "개\n";
           }
           return text;
         },
         playerRewardText: function(p){
-          console.log(p)
           var text = "";
           if(this.reward.redCube > 0){
-            text += "레드 큐브: " + p.reward.redCube + "개 ";
+            text += emoji_redcube + "레드 큐브: " + p.reward.redCube + "개 ";
           }
           if(this.reward.eternalFlame > 0){
-            text += "영원한 환생의 불꽃: " + p.reward.eternalFlame + "개 ";
+            text += emoji_eternalrebirthflame + "영원한 환생의 불꽃: " + p.reward.eternalFlame + "개 ";
           }
           return text;
         },
@@ -67,7 +71,7 @@ module.exports = async (client, message) => {
           });
         },
         bossAppearMessageText: function(){
-          var text = "";
+          var text = "--------------------------\n";
           this.playerSort();
           var _this = this;
 
@@ -86,7 +90,8 @@ module.exports = async (client, message) => {
             text +=  "\n보상 \n";
 
             this.players.forEach((p, i) => {
-              text += "["+(i + 1)+"] " + p.username + ": " + _this.playerRewardText(p) + "\n";
+              var str = "" + ((p.firstAttack == true)?":one:":"") + ((i == 0)?":first_place:":"") + ((p.spoon == true)?"🥄":"");
+              text += "["+(i + 1)+"] " + str + p.username + ": " + _this.playerRewardText(p) + "\n";
             });
 
           }else{
@@ -101,6 +106,8 @@ module.exports = async (client, message) => {
             });
 
           }
+          text += "\n--------------------------\n";
+
 
 
 
@@ -119,8 +126,6 @@ module.exports = async (client, message) => {
           return damage;
         },
         onDead: function(){
-          console.log("ondead1")
-
           this.playerSort();
           var _this = this;
           this.players.forEach((p, i) => {
@@ -138,8 +143,6 @@ module.exports = async (client, message) => {
 
           });
 
-          console.log(this.players)
-          console.log("ondead2")
 
           this.players.forEach(async (p, i) => {
             var muser = await db.MUser.findOne({
@@ -154,7 +157,6 @@ module.exports = async (client, message) => {
             await muser.save();
 
           });
-          console.log("ondead3")
 
 
         }
@@ -168,14 +170,23 @@ module.exports = async (client, message) => {
       }
       var bossApearMessage = await segcjannel.send(boss.bossAppearMessageText());
       await Promise.all([
-        bossApearMessage.react('🏹'),
+        bossApearMessage.react('🥄'),
+
       ]);
+      setTimeout(async function(){
+        await Promise.all([
+          bossApearMessage.react('🏹'),
+        ]);
+      }, 10000)
+
       const bossAttackFilter = (reaction, user) => {
-        return  ['🏹'].includes(reaction.emoji.name) && user.id !== client.user.id;
+        return  ['🏹', '🥄'].includes(reaction.emoji.name) && user.id !== client.user.id;
       };
       var startTime = new Date();
-      while(!boss.isDead || new Date() - startTime > TIMELIMIT){
-        await bossApearMessage.awaitReactions(bossAttackFilter, { max: 1, time: 60000, errors: ['time'] })
+      while(!boss.isDead && (new Date() - startTime <  TIMELIMIT)){
+
+        try {
+          await bossApearMessage.awaitReactions(bossAttackFilter, { max: 1, time: 60000, errors: ['time'] })
           .then(async function(data) {
             const reaction = data.first();
             if(boss.isDead)return;
@@ -203,26 +214,67 @@ module.exports = async (client, message) => {
                       MUserId: muser.id
                     }
                   })
-                  boss.players.push(user);
 
-                  playerStat = maple.getPlayerStat(items, job);
-                  var damage;
-                  if(Math.random() < playerStat.crip){
-                    damage = boss.attack(Math.floor(playerStat.statAtk * playerStat.penet / 100 * 2));
-                  }
-                  else{
-                    damage = boss.attack(Math.floor(playerStat.statAtk * playerStat.penet / 100));
-                  }
-
-                  user.damage = damage;
-
-                  // console.log(user);
                   if(boss.players.length == 0){
                     user.firstAttack = true;
                   }else{
                     user.firstAttack = false;
                   }
-                  console.log("messagechanged")
+
+                  boss.players.push(user);
+
+                  playerStat = maple.getPlayerStat(items, job);
+
+
+
+                  var damage;
+                  if(Math.random() * 100< playerStat.crip){
+                    damage = Math.floor(playerStat.statAtk * playerStat.penet / 100 * 2);
+                    user.damage = (damage > boss.bossHp)? boss.bossHp: damage ;
+
+                    boss.attack(user.damage);
+                  }
+                  else{
+                    damage = Math.floor(playerStat.statAtk * playerStat.penet / 100);
+                    user.damage = (damage > boss.bossHp)? boss.bossHp:damage ;
+                    boss.attack(user.damage);
+                  }
+
+
+                  // console.log(user);
+
+                  bossApearMessage.edit(boss.bossAppearMessageText());
+
+                }
+              });
+            }else if(reaction.emoji.name == "🥄"){
+              reaction.users.cache.each(async user => {
+                if(!boss.players.includes(user) && !user.bot){
+                  var muser = await db.MUser.findOne({
+                    where: {
+                      id: user.id,
+                    }
+                  });
+                  if(!muser){
+                    segcjannel.send(user.username + " 유저가 존재하지 않습니다. !maple 가입 명령어를 통해 유저를 생성해주세요.");
+                    return;
+                  }
+
+
+                  if(boss.players.length == 0){
+                    user.firstAttack = true;
+                  }else{
+                    user.firstAttack = false;
+                  }
+
+                  boss.players.push(user);
+                  user.spoon = true;
+
+
+                  user.damage = 100;
+                  boss.attack(user.damage);
+
+
                   bossApearMessage.edit(boss.bossAppearMessageText());
 
                 }
@@ -233,6 +285,10 @@ module.exports = async (client, message) => {
             // console.log(reaction);
             console.log(data);
           });
+
+        } catch (e) {
+          console.log(e)
+        }
       }
 
       if(!boss.isDead){

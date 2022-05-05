@@ -20,6 +20,8 @@ const rarityString = {
   "legendary": "🟩레전더리 아이템",
 }
 
+const emoji_eternalrebirthflame = "<:eternalrebirthflame:971656195855241227>";
+const emoji_redcube = "<:redcube:971655681730035722>";
 
 
 function createItem(type){
@@ -514,22 +516,32 @@ function getPlayerStat(items, job){
 
 function getPlayerStatString(muser, items, job){
   var stat = getPlayerStat(items, job);
-  console.log(stat)
   var result = "\n";
   result += "내정보 \n";
-  result += "영원한 환생의 불꽃: " + muser.eternalflame + "개 \n";
-  result += "레드 큐브: " + muser.redcube + " 개\n";
+  result += "\n";
+
+  result += "직업 : " + job.jobname + "\n";
+  result += "\n";
+
+
+  result += emoji_eternalrebirthflame + "영원한 환생의 불꽃: " + muser.eternalflame + "개 \n";
+  result += emoji_redcube + "레드 큐브: " + muser.redcube + " 개\n";
   result += "스탯공격력 : " + stat["statAtk"] + "\n";
+  result += "\n";
 
   result += "STR : " + Math.floor(stat["str"]* (1 + stat["strp"] / 100)) + "\n";
   result += "DEX : " + Math.floor(stat["dex"]* (1 + stat["dexp"] / 100)) + "\n";
   result += "INT : " + Math.floor(stat["int"]* (1 + stat["intp"] / 100)) + "\n";
   result += "LUK : " + Math.floor(stat["luk"]* (1 + stat["lukp"] / 100)) + "\n";
+  result += "\n";
 
   result += "데미지 : " + stat["dmg"] + "% \n";
   result += "몬스터 방어율 무시 : " + (Math.floor(stat["penet"] * 10) / 10)  + "% \n";
   result += "보스 몬스터 공격 시 데미지 : " + stat["bossdmg"] + "% \n";
   result += "크리티컬확률 : " + stat["crip"] + "% \n";
+  result += "\n";
+
+  result += "🏹예상 데미지(방어율 100% 기준) : " + Math.floor( stat["statAtk"] * stat["penet"] / 100 ) + "\n";
   result += "----------------------";
 
 
@@ -853,7 +865,7 @@ exports.run = async (client, message, [action, args]) => {
       }else{
         var jobChoiceMessage = await channel.send("직업을 선택해주세요.\n1.전사 2.궁수 3.법사 4.도적 5.힘해적 6.덱해적");
         const jobChoiceFilter = (reaction, user) => {
-          return ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','❌'].includes(reaction.emoji.name) && user.id !== client.user.id;
+          return ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','❌'].includes(reaction.emoji.name) && user.id == author.id;
         };
         await Promise.all([
           jobChoiceMessage.react('1️⃣'),
@@ -867,28 +879,33 @@ exports.run = async (client, message, [action, args]) => {
         var jobId = 0;
         var jobChoiceExitFlag = false;
         var startTime = new Date();
-        while((jobId == 0 && !jobChoiceExitFlag) || new Date() - startTime > 60000){
-          await jobChoiceMessage.awaitReactions(jobChoiceFilter, { max: 1, time: 60000, errors: ['time'] })
-            .then(async function(data) {
-              const reaction = data.first();
-              if (reaction.emoji.name === '1️⃣') {
-                jobId = 0;
-              }else if (reaction.emoji.name === '2️⃣') {
-                jobId = 1;
-              }else if (reaction.emoji.name === '3️⃣') {
-                jobId = 2;
-              }else if (reaction.emoji.name === '4️⃣') {
-                jobId = 3;
-              }else if (reaction.emoji.name === '5️⃣') {
-                jobId = 4;
-              }else if (reaction.emoji.name === '6️⃣') {
-                jobId = 5;
-              }else if (reaction.emoji.name === '❌') {
-                stopFlag = true;
-              }
-            }).catch(async function(data) {
-              console.log(data);
-            });
+        while((jobId == 0 && !jobChoiceExitFlag) && new Date() - startTime < 60000){
+          try {
+            await jobChoiceMessage.awaitReactions(jobChoiceFilter, { max: 1, time: 60000, errors: ['time'] })
+              .then(async function(data) {
+                const reaction = data.first();
+                if (reaction.emoji.name === '1️⃣') {
+                  jobId = 0;
+                }else if (reaction.emoji.name === '2️⃣') {
+                  jobId = 1;
+                }else if (reaction.emoji.name === '3️⃣') {
+                  jobId = 2;
+                }else if (reaction.emoji.name === '4️⃣') {
+                  jobId = 3;
+                }else if (reaction.emoji.name === '5️⃣') {
+                  jobId = 4;
+                }else if (reaction.emoji.name === '6️⃣') {
+                  jobId = 5;
+                }else if (reaction.emoji.name === '❌') {
+                  stopFlag = true;
+                }
+              }).catch(async function(data) {
+                console.log(data);
+              });
+          } catch (e) {
+            console.log(e)
+          }
+
         }
 
         if(jobChoiceExitFlag){
@@ -972,7 +989,6 @@ exports.run = async (client, message, [action, args]) => {
     message.reply(getPlayerStatString(muser, items, job));
 
   }else if(action == "장비"){
-    console.log("1" + args + "1")
     var muser = await db.MUser.findOne({
       where: {
         id: author.id,
@@ -1039,82 +1055,84 @@ exports.run = async (client, message, [action, args]) => {
         break;
     }
     var itemStat = itemStatString(item, job);
-    itemStat += "\n영원한 환생의 불꽃 : " + muser.eternalflame + "개\n";
-    itemStat += "\n레드 큐브 : " + muser.redcube + "개\n";
+    itemStat += "\n";
+    itemStat += emoji_eternalrebirthflame + "영원한 환생의 불꽃 : " + muser.eternalflame + "개\n";
+    itemStat += emoji_redcube + "레드 큐브 : " + muser.redcube + "개\n";
     replyMessage = await message.channel.send(itemStat);
 
     var equipmentStatExitFlag = false;
     await Promise.all([
-      replyMessage.react('🔥'),
-      replyMessage.react('🟥'),
+      replyMessage.react(emoji_eternalrebirthflame),
+      replyMessage.react(emoji_redcube),
       replyMessage.react('❌'),
     ]);
     const equipmentStatFilter = (reaction, user) => {
-      return  ['🔥', '🟥', '❌'].includes(reaction.emoji.name) && user.id !== client.user.id;
+      return  ["redcube", "eternalrebirthflame",  '❌'].includes(reaction.emoji.name) && user.id == author.id;
+      // return true;
     };
 
     var startTime = new Date();
-    while(!equipmentStatExitFlag || new Date() - startTime > 120000){
+    while(!equipmentStatExitFlag && (new Date() - startTime < 10 * 60 * 1000)){
       var itemStat = itemStatString(item, job);
-      itemStat += "\n영원한 환생의 불꽃 : " + muser.eternalflame + " 개\n";
-      itemStat += "레드 큐브 : " + muser.redcube + " 개\n";
+      itemStat += emoji_eternalrebirthflame + "영원한 환생의 불꽃 : " + muser.eternalflame + "개\n";
+      itemStat += emoji_redcube + "레드 큐브 : " + muser.redcube + "개\n";
       replyMessage.edit(itemStat);
+      try {
+        await replyMessage.awaitReactions(equipmentStatFilter, { max: 1, time: 60000, errors: ['time'] })
+          .then(async function(data) {
+            const reaction = data.first();
+            if (reaction.emoji.name == "eternalrebirthflame") {
+              if(muser.eternalflame == 0){
+                replyMessage.edit(itemStat + "\n영원한 환생의 불꽃이 부족합니다.\n");
+                return;
+              }
+              var ao = setAdditionalOption(item.type);
+              item.additionalstr = ao["str"];
+              item.additionaldex = ao["dex"];
+              item.additionalint = ao["int"];
+              item.additionalluk = ao["luk"];
+              item.additionalstrdex = ao["strdex"];
+              item.additionalstrint = ao["strint"];
+              item.additionalstrluk = ao["strluk"];
+              item.additionaldexint = ao["dexint"];
+              item.additionaldexluk = ao["dexluk"];
+              item.additionalintluk = ao["intluk"];
+              item.additionalatk = ao["atk"];
+              item.additionalmatk = ao["matk"];
+              item.additionalbossdmg = ao["bossdmg"];
+              item.additionaldmg = ao["dmg"];
+              item.additionalallp = ao["allp"];
+              await item.save();
+              muser.eternalflame -= 1;
+              await muser.save();
+              await replyMessage.reactions.resolve(reaction).users.remove(author.id);
 
-      await replyMessage.awaitReactions(equipmentStatFilter, { max: 1, time: 60000, errors: ['time'] })
-        .then(async function(data) {
-          const reaction = data.first();
-
-          if (reaction.emoji.name == '🔥') {
-            if(muser.eternalflame == 0){
-              replyMessage.edit(itemStat + "\n영원한 환생의 불꽃이 부족합니다.\n");
-              return;
             }
-            var ao = setAdditionalOption(item.type);
-            item.additionalstr = ao["str"];
-            item.additionaldex = ao["dex"];
-            item.additionalint = ao["int"];
-            item.additionalluk = ao["luk"];
-            item.additionalstrdex = ao["strdex"];
-            item.additionalstrint = ao["strint"];
-            item.additionalstrluk = ao["strluk"];
-            item.additionaldexint = ao["dexint"];
-            item.additionaldexluk = ao["dexluk"];
-            item.additionalintluk = ao["intluk"];
-            item.additionalatk = ao["atk"];
-            item.additionalmatk = ao["matk"];
-            item.additionalbossdmg = ao["bossdmg"];
-            item.additionaldmg = ao["dmg"];
-            item.additionalallp = ao["allp"];
-            await item.save();
-            muser.eternalflame -= 1;
-            await muser.save();
-            // var users = replyMessage.reactions.resolve('🔥').users;
-            // if(users.resolve(author.id)){
-            await replyMessage.reactions.resolve('🔥').users.remove(author.id);
-            // }
-
-          }
-          else if (reaction.emoji.name == '🟥'){
-            if(muser.redcube == 0){
-              replyMessage.edit(itemStat + "\n레드 큐브가 부족합니다.\n");
-              return;
+            else if (reaction.emoji.name == "redcube"){
+              if(muser.redcube == 0){
+                replyMessage.edit(itemStat + "\n레드 큐브가 부족합니다.\n");
+                return;
+              }
+              var po = setPotentialOption(item.type, item.rarity);
+              item.rarity = po[0];
+              item.potential1 = po[1][0];
+              item.potential2 = po[1][1];
+              item.potential3 = po[1][2];
+              await item.save();
+              muser.redcube -= 1;
+              await muser.save();
+              await replyMessage.reactions.resolve(reaction).users.remove(author.id);
             }
-            var po = setPotentialOption(item.type, item.rarity);
-            item.rarity = po[0];
-            item.potential1 = po[1][0];
-            item.potential2 = po[1][1];
-            item.potential3 = po[1][2];
-            await item.save();
-            muser.redcube -= 1;
-            await muser.save();
-            await replyMessage.reactions.resolve('🟥').users.remove(author.id);
-          }
-          else if (reaction.emoji.name == '❌'){
-            equipmentStatExitFlag = true;
-          }
-        })
+            else if (reaction.emoji.name == '❌'){
+              equipmentStatExitFlag = true;
+            }
+          })
+        } catch (e) {
+          console.log(e)
+        }
 
-      }
+
+    }
 
       replyMessage.reactions.removeAll();
 
@@ -1156,10 +1174,8 @@ exports.run = async (client, message, [action, args]) => {
     var items = [];
 
     Object.keys(itemData["defaultStat"]).forEach(async (itemType, i) => {
-      console.log(itemType)
       var ao = setAdditionalOption(itemType);
       var po = setPotentialOption(itemType, "rare");
-      console.log(ao);
       var item = await db.MEquipmentItem.create({
         username: author.username,
         type: itemType,
@@ -1193,9 +1209,9 @@ exports.run = async (client, message, [action, args]) => {
         "jobname": "도적"
       }
     })
-    console.log(job)
-
-    console.log(getPlayerStat(items, job));
+    // console.log(job)
+    //
+    // console.log(getPlayerStat(items, job));
 
 
 
