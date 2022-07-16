@@ -36,7 +36,6 @@ module.exports = async (client, message) => {
         rewardRatio = specialBossObject.hp;
         bossName = mapleData["boss"][r]["name"]
       }
-      console.log(specialBossObject);
 
       var boss = {
         players: [],
@@ -81,7 +80,6 @@ module.exports = async (client, message) => {
           if(this.reward.eternalFlame > 0){
             text += maple.emoji_eternalrebirthflame + ",영원한 환생의 불꽃: " + p.reward.eternalFlame + "개 ";
           }
-          console.log(p.reward);
           if(p.reward.special.length != 0){
             for(var i = 0; i < p.reward.special.length; i++){
               var item = p.reward.special[i];

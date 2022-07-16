@@ -101,6 +101,23 @@
     "randomPotentialOption": true,
     "default": true
   },
+  "subweapon":{
+    "type": "subweapon",
+    "level": 100,
+    "str": 10,
+    "dex": 10,
+    "int": 10,
+    "luk": 10,
+    "atk": 3,
+    "matk": 3,
+    "bossdmg": 0,
+    "penet": 0,
+    "dmg": 0,
+    "allp": 0,
+    "additionalOption": false,
+    "randomPotentialOption": true,
+    "default": true
+  },
   "shoulder":{
     "type": "shoulder",
     "level": 160,

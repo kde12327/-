@@ -904,21 +904,21 @@ async function manualUpdate(userid) {
   }
 
   // add some equipment
-
+  // 22-07-16
   var addItemList = ["emblem", "shoulder", "cape", "subweapon"];
 
-  addItemList.forEach(async (itemType, i) => {
+  for await(const itemType of addItemList){
     var item = await db.MEquipmentItem.findOne({
       where:{
         MUserId: userid,
-        type: "emblem"
+        type: itemType
       }
     });
+
     if(!item){
       var ao = setAdditionalOption(itemType);
       var po = setPotentialOption(itemType, "rare");
       var itemStat = mapleData["item"][itemType];
-
       var _item = await db.MEquipmentItem.create({
         MUserId: userid,
         type: itemType,
@@ -944,7 +944,7 @@ async function manualUpdate(userid) {
         potential3: itemStat.randomPotentialOption?po[1][2]:0,
       });
     }
-  });
+  }
 
 
 
