@@ -28,12 +28,15 @@ exports.run = async (client, message, [action, volume]) => {
         `);
       break;
     case '송수는?':
-      message.channel.send('바보다!');
-      message.channel.send('<:24:757596444948693072>');
+      var m = await message.channel.send('야송수다!');
+      await Promise.all([
+        m.react('<:wordcon12:985461882737549313>'),
+        m.react('<:wordcon11:985459226187014184>'),
+        m.react('<:wordcon10:986135565546172456>'),
+      ]);
       break;
     case '학인이는?':
-      message.channel.send('티니아가 없다!');
-      message.channel.send('<:not_hak:829933350809894915>');
+      message.channel.send('대지목이 없다!');
       message.channel.send('<:24:757596444948693072>');
       break;
     case '꿀벌 입장~':

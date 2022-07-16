@@ -11,7 +11,9 @@
       "bossdmg": 0,
       "penet": 10,
       "dmg": 0,
-      "allp": 0
+      "allp": 0,
+      "additionalOption": true,
+      "randomPotentialOption": true
     },
     "clothes":{
       "level": 160,
@@ -24,7 +26,9 @@
       "bossdmg": 0,
       "penet": 10,
       "dmg": 0,
-      "allp": 0
+      "allp": 0,
+      "additionalOption": true,
+      "randomPotentialOption": true
     },
     "pants":{
       "level": 160,
@@ -37,7 +41,9 @@
       "bossdmg": 0,
       "penet": 10,
       "dmg": 0,
-      "allp": 0
+      "allp": 0,
+      "additionalOption": true,
+      "randomPotentialOption": true
     },
     "shoes":{
       "level": 160,
@@ -50,7 +56,9 @@
       "bossdmg": 0,
       "penet": 0,
       "dmg": 0,
-      "allp": 0
+      "allp": 0,
+      "additionalOption": true,
+      "randomPotentialOption": true
     },
     "gloves":{
       "level": 160,
@@ -63,7 +71,9 @@
       "bossdmg": 0,
       "penet": 0,
       "dmg": 0,
-      "allp": 0
+      "allp": 0,
+      "additionalOption": true,
+      "randomPotentialOption": true
     },
     "weapon":{
       "level": 160,
@@ -76,7 +86,54 @@
       "bossdmg": 30,
       "penet": 10,
       "dmg": 0,
-      "allp": 0
+      "allp": 0,
+      "additionalOption": true,
+      "randomPotentialOption": true
+    },
+    "shoulder":{
+      "level": 160,
+      "str": 14,
+      "dex": 14,
+      "int": 14,
+      "luk": 14,
+      "atk": 10,
+      "matk": 10,
+      "bossdmg": 0,
+      "penet": 0,
+      "dmg": 0,
+      "allp": 0,
+      "additionalOption": false,
+      "randomPotentialOption": true
+    },
+    "cape":{
+      "level": 160,
+      "str": 15,
+      "dex": 15,
+      "int": 15,
+      "luk": 15,
+      "atk": 2,
+      "matk": 2,
+      "bossdmg": 0,
+      "penet": 0,
+      "dmg": 0,
+      "allp": 0,
+      "additionalOption": true,
+      "randomPotentialOption": true
+    },
+    "emblem":{
+      "level": 160,
+      "str": 10,
+      "dex": 10,
+      "int": 10,
+      "luk": 10,
+      "atk": 2,
+      "matk": 2,
+      "bossdmg": 0,
+      "penet": 0,
+      "dmg": 0,
+      "allp": 0,
+      "additionalOption": false,
+      "randomPotentialOption": true
     }
   },
   "additionalOption":{
@@ -166,7 +223,7 @@
         ["몬스터 방어율 무시 : +30%", 3],
         ["보스 몬스터 공격 시 데미지 : +30%", 3]
       ],
-      "lengendary":[
+      "legendary":[
         ["STR : +12%", 4],
         ["DEX : +12%", 4],
         ["INT : +12%", 4],
@@ -181,6 +238,71 @@
         ["보스 몬스터 공격 시 데미지 : +30%", 2],
         ["보스 몬스터 공격 시 데미지 : +35%", 2],
         ["보스 몬스터 공격 시 데미지 : +40%", 2]
+      ]
+    },
+    "emblem":{
+      "normal":[
+        ["STR : +6", 3],
+        ["DEX : +6", 3],
+        ["INT : +6", 3],
+        ["LUK : +6", 3],
+        ["공격력 : +6", 2],
+        ["마력 : +6", 2]
+      ],
+      "rare":[
+        ["STR : +12", 3],
+        ["DEX : +12", 3],
+        ["INT : +12", 3],
+        ["LUK : +12", 3],
+        ["공격력 : +12", 2],
+        ["마력 : +12", 2],
+        ["STR : +3%", 3],
+        ["DEX : +3%", 3],
+        ["INT : +3%", 3],
+        ["LUK : +3%", 3],
+        ["공격력 : +3%", 1],
+        ["마력 : +3%", 1],
+        ["크리티컬확률 : +4%", 1],
+        ["데미지 : +3%", 1],
+        ["올스탯 : +5", 2],
+        ["몬스터 방어율 무시 : +15%", 1]
+      ],
+      "epic":[
+        ["STR : +6%", 5],
+        ["DEX : +6%", 5],
+        ["INT : +6%", 5],
+        ["LUK : +6%", 5],
+        ["공격력 : +6%", 2],
+        ["마력 : +6%", 2],
+        ["크리티컬확률 : +8%", 2],
+        ["데미지 : +6%", 2],
+        ["올스탯 : +3%", 2],
+        ["몬스터 방어율 무시 : +15%", 2]
+      ],
+      "unique":[
+        ["STR : +9%", 5],
+        ["DEX : +9%", 5],
+        ["INT : +9%", 5],
+        ["LUK : +9%", 5],
+        ["공격력 : +9%", 3],
+        ["마력 : +9%", 3],
+        ["크리티컬확률 : +9%", 4],
+        ["데미지 : +9%", 3],
+        ["올스탯 : +6%", 4],
+        ["몬스터 방어율 무시 : +30%", 3]
+      ],
+      "legendary":[
+        ["STR : +12%", 4],
+        ["DEX : +12%", 4],
+        ["INT : +12%", 4],
+        ["LUK : +12%", 4],
+        ["공격력 : +12%", 2],
+        ["마력 : +12%", 2],
+        ["크리티컬확률 : +12%", 2],
+        ["데미지 : +12%", 2],
+        ["올스탯 : +9%", 3],
+        ["몬스터 방어율 무시 : +35%", 2],
+        ["몬스터 방어율 무시 : +40%", 2]
       ]
     },
     "others":{
@@ -215,7 +337,7 @@
         ["LUK : +9%", 5],
         ["올스탯 : +6%", 4]
       ],
-      "lengendary":[
+      "legendary":[
         ["STR : +12%", 4],
         ["DEX : +12%", 4],
         ["INT : +12%", 4],
@@ -223,5 +345,51 @@
         ["올스탯 : +9%", 3]
       ]
     }
-  }
+  },
+  "boss": [
+    {
+      "name": "혼테일",
+      "level": 160,
+      "sheild": 0,
+      "hp": 2,
+      "reward": [
+        {
+          "type": "ring1",
+          "name": "실버블라썸 링",
+          "level": 110,
+          "str": 5,
+          "dex": 5,
+          "int": 5,
+          "luk": 5,
+          "atk": 2,
+          "matk": 2,
+          "bossdmg": 0,
+          "penet": 0,
+          "dmg": 0,
+          "allp": 0,
+          "additionalOption": false,
+          "randomPotentialOption": true,
+          "drop": 1
+        },
+        {
+          "type": "earacc",
+          "name": "데아시두스 이어링",
+          "level": 130,
+          "str": 5,
+          "dex": 5,
+          "int": 5,
+          "luk": 5,
+          "atk": 2,
+          "matk": 2,
+          "bossdmg": 0,
+          "penet": 0,
+          "dmg": 0,
+          "allp": 0,
+          "additionalOption": true,
+          "randomPotentialOption": true,
+          "drop": 1
+        }
+      ]
+    }
+  ]
 }

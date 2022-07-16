@@ -46,4 +46,7 @@ module.exports = (client, message) => {
     client.emit('maplestoryboss');
 
   }, MAPLEINTERVAL);
+
+  client.emit('mapleupdate');
+
 };

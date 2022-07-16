@@ -1,0 +1,34 @@
+{
+  "weapon":{
+    "str": 0,
+    "dex": 0,
+    "int": 0,
+    "luk": 0,
+    "strdex": 0,
+    "strint": 0,
+    "strluk": 0,
+    "dexint": 0,
+    "dexluk": 0,
+    "intluk": 0,
+    "atk": 0,
+    "matk": 0,
+    "bossdmg": 0,
+    "dmg": 0,
+    "allp": 0
+  },
+  "others":{
+    "str": 0,
+    "dex": 0,
+    "int": 0,
+    "luk": 0,
+    "strdex": 0,
+    "strint": 0,
+    "strluk": 0,
+    "dexint": 0,
+    "dexluk": 0,
+    "intluk": 0,
+    "atk": 0,
+    "matk": 0,
+    "allp": 0
+  }
+}

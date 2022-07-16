@@ -1,0 +1,33 @@
+[
+  {
+    "name": "혼테일",
+    "level": 160,
+    "sheild": 50,
+    "hp": 2,
+    "reward": [
+      "ring",
+      "earacc",
+      "pendant"
+    ]
+  },
+  {
+    "name": "핑크빈",
+    "level": 190,
+    "sheild": 100,
+    "hp": 6.9,
+    "reward": [
+      "poket",
+      "eyeacc"
+    ]
+  },
+  {
+    "name": "자쿰",
+    "level": 180,
+    "sheild": 100,
+    "hp": 8.4,
+    "reward": [
+      "forehead",
+      "belt"
+    ]
+  }
+]
