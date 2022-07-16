@@ -525,18 +525,18 @@ function getPlayerStat(items, job){
   switch (job.id) {
     case 0:
     case 4:
-      stat = (str * (1 + strp * 0.01) * 4 + dex * (1 + dexp * 0.01)) * 0.01 * Math.floor(atk * (1 + atkp * 0.01)) * (1 + dmg * 0.01);
+      stat = (str * (1 + strp * 0.01) * 4 + dex * (1 + dexp * 0.01)) * 0.01 * Math.floor(atk * (1 + atkp * 0.01)) * (1 + (dmg + bossdmg) * 0.01);
       break;
     case 1:
     case 5:
-      stat = (dex * (1 + dexp * 0.01) * 4 + str * (1 + strp * 0.01)) * 0.01 * Math.floor(atk * (1 + atkp * 0.01)) * (1 + dmg * 0.01);
+      stat = (dex * (1 + dexp * 0.01) * 4 + str * (1 + strp * 0.01)) * 0.01 * Math.floor(atk * (1 + atkp * 0.01)) * (1 + (dmg + bossdmg) * 0.01);
 
       break;
     case 2:
-      stat = (int * (1 + intp * 0.01) * 4 + luk * (1 + lukp * 0.01)) * 0.01 * Math.floor(matk * (1 + matkp * 0.01)) * (1 + dmg * 0.01);
+      stat = (int * (1 + intp * 0.01) * 4 + luk * (1 + lukp * 0.01)) * 0.01 * Math.floor(matk * (1 + matkp * 0.01)) * (1 + (dmg + bossdmg) * 0.01);
       break;
     case 3:
-      stat = (luk * (1 + lukp * 0.01) * 4 + dex * (1 + dexp * 0.01)) * 0.01 * Math.floor(atk * (1 + atkp * 0.01)) * (1 + dmg * 0.01);
+      stat = (luk * (1 + lukp * 0.01) * 4 + dex * (1 + dexp * 0.01)) * 0.01 * Math.floor(atk * (1 + atkp * 0.01)) * (1 + (dmg + bossdmg) * 0.01);
       break;
 
   }
