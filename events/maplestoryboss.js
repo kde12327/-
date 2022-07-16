@@ -67,7 +67,7 @@ module.exports = async (client, message) => {
               var itemType = this.specialBossObject.reward[i];
               var item = maple.getBossRewardItem(itemType)
 
-              text += "---" + maple.equipmentString[item.type] + ":" + item.name + "\n";
+              text += "---" + maple.equipmentString[item.type] + ": " + item.name + "\n";
             }
           }
           return text;
@@ -84,7 +84,7 @@ module.exports = async (client, message) => {
             for(var i = 0; i < p.reward.special.length; i++){
               var item = p.reward.special[i];
               if(item.duplicated)continue;
-              text += ", " + maple.equipmentString[item.type] + ":" + item.name;
+              text += ", " + maple.equipmentString[item.type] + ": " + item.name;
             }
 
           }
@@ -180,19 +180,23 @@ module.exports = async (client, message) => {
             p.reward.redCube = reward.redCube;
             p.reward.eternalFlame = reward.eternalFlame;
             p.reward.special = [];
-            for await (const itemType of _this.specialBossObject.reward){
-              var item = maple.getBossRewardItem(itemType)
-              var mitem = await db.MEquipmentItem.findOne({
-                where:{
-                  MUserId: p.id,
-                  type: item.type,
-                },
-              });
+            if(_this.specialBossObject){
 
-              if(!mitem && Math.random() < item.drop){
-                p.reward.special.push(item);
+              for await (const itemType of _this.specialBossObject.reward){
+                var item = maple.getBossRewardItem(itemType)
+                var mitem = await db.MEquipmentItem.findOne({
+                  where:{
+                    MUserId: p.id,
+                    type: item.type,
+                  },
+                });
+
+                if(!mitem && Math.random() < item.drop){
+                  p.reward.special.push(item);
+                }
               }
             }
+
 
             var muser = await db.MUser.findOne({
               where: {
@@ -201,46 +205,48 @@ module.exports = async (client, message) => {
             });
             muser.redcube += p.reward.redCube;
             muser.eternalflame += p.reward.eternalFlame;
-            for await(const item of p.reward.special) {
-              var mitem = await db.MEquipmentItem.findOne({
-                where:{
+            if(_this.specialBossObject){
+
+              for await(const item of p.reward.special) {
+                var mitem = await db.MEquipmentItem.findOne({
+                  where:{
+                    MUserId: p.id,
+                    type: item.type,
+                  },
+                });
+
+                if(mitem){
+                  // item.duplicated = true;
+                  return;
+                }
+                var ao = maple.setAdditionalOption(item.type);
+                var po = maple.setPotentialOption(item.type, "rare");
+                mitem = await db.MEquipmentItem.create({
                   MUserId: p.id,
                   type: item.type,
-                },
-              });
-
-              if(mitem){
-                // item.duplicated = true;
-                return;
+                  level: item["level"],
+                  rarity: item.randomPotentialOption?po[0]:0,
+                  additionalstr: item.additionalOption?ao["str"]:0,
+                  additionaldex: item.additionalOption?ao["dex"]:0,
+                  additionalint: item.additionalOption?ao["int"]:0,
+                  additionalluk: item.additionalOption?ao["luk"]:0,
+                  additionalstrdex: item.additionalOption?ao["strdex"]:0,
+                  additionalstrint: item.additionalOption?ao["strint"]:0,
+                  additionalstrluk: item.additionalOption?ao["strluk"]:0,
+                  additionaldexint: item.additionalOption?ao["dexint"]:0,
+                  additionaldexluk: item.additionalOption?ao["dexluk"]:0,
+                  additionalintluk: item.additionalOption?ao["intluk"]:0,
+                  additionalatk: item.additionalOption?ao["atk"]:0,
+                  additionalmatk: item.additionalOption?ao["matk"]:0,
+                  additionalbossdmg: item.additionalOption?ao["bossdmg"]:0,
+                  additionaldmg: item.additionalOption?ao["dmg"]:0,
+                  additionalallp: item.additionalOption?ao["allp"]:0,
+                  potential1: item.randomPotentialOption?po[1][0]:0,
+                  potential2: item.randomPotentialOption?po[1][1]:0,
+                  potential3: item.randomPotentialOption?po[1][2]:0,
+                });
               }
-              var ao = maple.setAdditionalOption(item.type);
-              var po = maple.setPotentialOption(item.type, "rare");
-              mitem = await db.MEquipmentItem.create({
-                MUserId: p.id,
-                type: item.type,
-                level: item["level"],
-                rarity: item.randomPotentialOption?po[0]:0,
-                additionalstr: item.additionalOption?ao["str"]:0,
-                additionaldex: item.additionalOption?ao["dex"]:0,
-                additionalint: item.additionalOption?ao["int"]:0,
-                additionalluk: item.additionalOption?ao["luk"]:0,
-                additionalstrdex: item.additionalOption?ao["strdex"]:0,
-                additionalstrint: item.additionalOption?ao["strint"]:0,
-                additionalstrluk: item.additionalOption?ao["strluk"]:0,
-                additionaldexint: item.additionalOption?ao["dexint"]:0,
-                additionaldexluk: item.additionalOption?ao["dexluk"]:0,
-                additionalintluk: item.additionalOption?ao["intluk"]:0,
-                additionalatk: item.additionalOption?ao["atk"]:0,
-                additionalmatk: item.additionalOption?ao["matk"]:0,
-                additionalbossdmg: item.additionalOption?ao["bossdmg"]:0,
-                additionaldmg: item.additionalOption?ao["dmg"]:0,
-                additionalallp: item.additionalOption?ao["allp"]:0,
-                potential1: item.randomPotentialOption?po[1][0]:0,
-                potential2: item.randomPotentialOption?po[1][1]:0,
-                potential3: item.randomPotentialOption?po[1][2]:0,
-              });
             }
-
             await muser.save();
           }
 
@@ -279,7 +285,7 @@ module.exports = async (client, message) => {
             if(boss.isDead)return;
             if (reaction.emoji.name == '🏹') {
               reaction.users.cache.each(async user => {
-                if(!boss.players.find(e => e.id == user.id) && !user.bot && boss.canhit){
+                if(!user.bot && !boss.players.find(e => e.id == user.id) &&  boss.canhit){
                   var muser = await db.MUser.findOne({
                     where: {
                       id: user.id,
@@ -334,9 +340,9 @@ module.exports = async (client, message) => {
 
                 }
               });
-            }else if(!boss.players.find(e => e.id == user.id) && reaction.emoji.name == "🥄"){
+            }else if(reaction.emoji.name == "🥄"){
               reaction.users.cache.each(async user => {
-                if(!boss.players.includes(user) && !user.bot){
+                if(!boss.players.find(e => e.id == user.id) && !user.bot){
                   var muser = await db.MUser.findOne({
                     where: {
                       id: user.id,
