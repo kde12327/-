@@ -33,8 +33,8 @@ module.exports = (client, message) => {
       console.log('SEG coin price['+ new Date() +']: '+coin.price);
       console.log(COINMAX, COINMIN);
       await coin.save();
-      var segcjannel = client.channels.cache.get('836539076785078272');
-      segcjannel.send('SEG coin price['+ new Date() +']: '+coin.price);
+      // var segcjannel = client.channels.cache.get('836539076785078272');
+      // segcjannel.send('SEG coin price['+ new Date() +']: '+coin.price);
     } catch (e) {
       console.log(e);
     } finally {

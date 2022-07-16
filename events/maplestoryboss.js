@@ -336,7 +336,7 @@ module.exports = async (client, message) => {
 
                 }
               });
-            }else if(reaction.emoji.name == "🥄"){
+            }else if(!boss.players.find(e => e.id == user.id) && reaction.emoji.name == "🥄"){
               reaction.users.cache.each(async user => {
                 if(!boss.players.includes(user) && !user.bot){
                   var muser = await db.MUser.findOne({
