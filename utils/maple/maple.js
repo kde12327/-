@@ -584,8 +584,8 @@ function getPlayerStatString(muser, items, job){
   result += "LUK : " + Math.floor(stat["luk"]* (1 + stat["lukp"] / 100)) + "\n";
   result += "\n";
 
-  result += "공격력 : " + Math.floor(stat["atk"] * ((100 + stat["atk"]) / 100)) + "\n";
-  result += "마력 : " + Math.floor(stat["matk"] * ((100 + stat["matk"]) / 100)) + "\n";
+  result += "공격력 : " + Math.floor(stat["atk"] * ((100 + stat["atkp"]) / 100)) + "\n";
+  result += "마력 : " + Math.floor(stat["matk"] * ((100 + stat["matkp"]) / 100)) + "\n";
   result += "데미지 : " + stat["dmg"] + "% \n";
   result += "몬스터 방어율 무시 : " + (Math.floor(stat["penet"] * 10) / 10)  + "% \n";
   result += "보스 몬스터 공격 시 데미지 : " + stat["bossdmg"] + "% \n";
