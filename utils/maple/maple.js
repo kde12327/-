@@ -231,7 +231,7 @@ function itemStat(item)
   }else{
     matk += mapleData["item"][item.type]["matk"];
     if(item.additionalmatk != 0)
-      atk += (8 - item.additionalmatk);
+      matk += (8 - item.additionalmatk);
   }
 
   if(item.type == "weapon"){
