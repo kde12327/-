@@ -259,15 +259,17 @@ exports.run = async (client, message, [action, args]) => {
 
     if(mapleData["item"][type]["additionalOption"]){
       await replyMessage.react(maple.emoji_eternalrebirthflame)
+      await replyMessage.react(maple.emoji_blackrebirthflame)
     }
     if(mapleData["item"][type]["randomPotentialOption"]){
       await replyMessage.react(maple.emoji_redcube)
+      await replyMessage.react(maple.emoji_blackcube)
     }
     await replyMessage.react('❌');
 
 
     const equipmentStatFilter = (reaction, user) => {
-      return  ["redcube", "eternalrebirthflame",  '❌'].includes(reaction.emoji.name) && user.id == author.id;
+      return  ["redcube", "eternalrebirthflame", "blackcube", "blackrebirthflame", '❌'].includes(reaction.emoji.name) && user.id == author.id;
       // return true;
     };
 
@@ -294,7 +296,6 @@ exports.run = async (client, message, [action, args]) => {
             const reaction = data.first();
             if (reaction.emoji.name == "eternalrebirthflame" && mapleData["item"][type]["additionalOption"]) {
               touchTime = new Date();
-              if(["emblem", "shoulder", "ring"].includes(item.type)) return;
               if(muser.eternalflame == 0){
                 replyMessage.edit(itemStat + "\n영원한 환생의 불꽃이 부족합니다.\n");
                 return;
@@ -335,6 +336,51 @@ exports.run = async (client, message, [action, args]) => {
               await item.save();
               muser.redcube -= 1;
               await muser.save();
+              await replyMessage.reactions.resolve(reaction).users.remove(author.id);
+            }
+            else if (reaction.emoji.name == "blackrebirthflame" && mapleData["item"][type]["additionalOption"]){
+              touchTime = new Date();
+              if(muser.eternalflame < 100){
+                replyMessage.edit(itemStat + "\n영원한 환생의 불꽃 100개가 필요합니다.\n");
+                return;
+              }
+              var resultItem = maple.setServeralAdditionalOption(items, item, job, 100);
+              item.additionalstr = resultItem.additionalstr
+              item.additionaldex = resultItem.additionaldex
+              item.additionalint = resultItem.additionalint
+              item.additionalluk = resultItem.additionalluk
+              item.additionalstrdex = resultItem.additionalstrdex
+              item.additionalstrint = resultItem.additionalstrint
+              item.additionalstrluk = resultItem.additionalstrluk
+              item.additionaldexint = resultItem.additionaldexint
+              item.additionaldexluk = resultItem.additionaldexluk
+              item.additionalintluk = resultItem.additionalintluk
+              item.additionalatk = resultItem.additionalatk
+              item.additionalmatk = resultItem.additionalmatk
+              item.additionalbossdmg = resultItem.additionalbossdmg
+              item.additionaldmg = resultItem.additionaldmg
+              item.additionalallp = resultItem.additionalallp
+              await item.save();
+              muser.eternalflame -= 100;
+              await muser.save();
+
+              await replyMessage.reactions.resolve(reaction).users.remove(author.id);
+            }
+            else if (reaction.emoji.name == "blackcube" && mapleData["item"][type]["randomPotentialOption"]){
+              touchTime = new Date();
+              if(muser.redcube < 100){
+                replyMessage.edit(itemStat + "\n레드 큐브 100개가 필요합니다.\n");
+                return;
+              }
+              var resultItem = maple.setServeralPotentialOption(items, item, job, 100);
+              item.rarity = resultItem.rarity
+              item.potential1 = resultItem.potential1
+              item.potential2 = resultItem.potential2
+              item.potential3 = resultItem.potential3
+              await item.save();
+              muser.redcube -= 100;
+              await muser.save();
+
               await replyMessage.reactions.resolve(reaction).users.remove(author.id);
             }
             else if (reaction.emoji.name == '❌'){

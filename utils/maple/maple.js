@@ -49,7 +49,9 @@ const rarityString = {
 }
 
 const emoji_eternalrebirthflame = "<:eternalrebirthflame:971656195855241227>";
+const emoji_blackrebirthflame = "<:blackrebirthflame:1010092972475424779>";
 const emoji_redcube = "<:redcube:971655681730035722>";
+const emoji_blackcube = "<:blackcube:1010092811305095180>";
 
 
 function itemStatString(item, job, statAtkDefer)
@@ -889,6 +891,118 @@ function getBossRewardItem(type){
   return mapleData["item"][type];
 }
 
+function setServeralPotentialOption(items, item, job, num){
+  var beforePlayerStat = getPlayerStat(items, job);
+
+  items.push(item);
+  var afterPlayerStat = getPlayerStat(items, job);
+  items.pop(item);
+  var statAtkDefer = afterPlayerStat.statAtk - beforePlayerStat.statAtk;
+  var maxPlayerStat = statAtkDefer;
+  var resultItem = {
+    rarity: item.rarity,
+    potential1: item.potential1 ,
+    potential2: item.potential2,
+    potential3 : item.potential3
+  }
+  while(num--){
+    beforePlayerStat = getPlayerStat(items, job);
+
+    var po = setPotentialOption(item.type, item.rarity);
+    item.rarity = po[0];
+    item.potential1 = po[1][0];
+    item.potential2 = po[1][1];
+    item.potential3 = po[1][2];
+
+    items.push(item);
+    afterPlayerStat = getPlayerStat(items, job);
+    items.pop(item);
+    statAtkDefer = afterPlayerStat.statAtk - beforePlayerStat.statAtk;
+
+    if( statAtkDefer > maxPlayerStat || item.rarity > resultItem.rarity){
+      statAtkDefer = maxPlayerStat
+      resultItem.rarity = po[0]
+      resultItem.potential1 = po[1][0]
+      resultItem.potential2 = po[1][1]
+      resultItem.potential3 = po[1][2]
+    }
+  }
+  return resultItem;
+}
+
+function setServeralAdditionalOption(items, item, job, num){
+  var beforePlayerStat = getPlayerStat(items, job);
+
+  items.push(item);
+  var afterPlayerStat = getPlayerStat(items, job);
+  items.pop(item);
+  var statAtkDefer = afterPlayerStat.statAtk - beforePlayerStat.statAtk;
+  var maxPlayerStat = statAtkDefer;
+  var resultItem = {
+    additionalstr: item.additionalstr,
+    additionaldex: item.additionaldex,
+    additionalint: item.additionalint,
+    additionalluk: item.additionalluk,
+    additionalstrdex: item.additionalstrdex,
+    additionalstrint: item.additionalstrint,
+    additionalstrluk: item.additionalstrluk,
+    additionaldexint: item.additionaldexint,
+    additionaldexluk: item.additionaldexluk,
+    additionalintluk: item.additionalintluk,
+    additionalatk: item.additionalatk,
+    additionalmatk: item.additionalmatk,
+    additionalbossdmg: item.additionalbossdmg,
+    additionaldmg: item.additionaldmg,
+    additionalallp: item.additionalallp
+  }
+  while(num--){
+     beforePlayerStat = getPlayerStat(items, job);
+
+    var ao = setAdditionalOption(item.type);
+    item.additionalstr = ao["str"];
+    item.additionaldex = ao["dex"];
+    item.additionalint = ao["int"];
+    item.additionalluk = ao["luk"];
+    item.additionalstrdex = ao["strdex"];
+    item.additionalstrint = ao["strint"];
+    item.additionalstrluk = ao["strluk"];
+    item.additionaldexint = ao["dexint"];
+    item.additionaldexluk = ao["dexluk"];
+    item.additionalintluk = ao["intluk"];
+    item.additionalatk = ao["atk"];
+    item.additionalmatk = ao["matk"];
+    item.additionalbossdmg = ao["bossdmg"];
+    item.additionaldmg = ao["dmg"];
+    item.additionalallp = ao["allp"];
+
+    items.push(item);
+    afterPlayerStat = getPlayerStat(items, job);
+    items.pop(item);
+    statAtkDefer = afterPlayerStat.statAtk - beforePlayerStat.statAtk;
+
+    if( statAtkDefer > maxPlayerStat){
+      statAtkDefer = maxPlayerStat
+      resultItem.additionalstr = ao["str"];
+      resultItem.additionaldex = ao["dex"];
+      resultItem.additionalint = ao["int"];
+      resultItem.additionalluk = ao["luk"];
+      resultItem.additionalstrdex = ao["strdex"];
+      resultItem.additionalstrint = ao["strint"];
+      resultItem.additionalstrluk = ao["strluk"];
+      resultItem.additionaldexint = ao["dexint"];
+      resultItem.additionaldexluk = ao["dexluk"];
+      resultItem.additionalintluk = ao["intluk"];
+      resultItem.additionalatk = ao["atk"];
+      resultItem.additionalmatk = ao["matk"];
+      resultItem.additionalbossdmg = ao["bossdmg"];
+      resultItem.additionaldmg = ao["dmg"];
+      resultItem.additionalallp = ao["allp"];
+    }
+    return resultItem;
+  }
+  return resultItem;
+}
+
 async function manualUpdate(userid) {
   // legendary -> legendary bug fix
   // 2022-06-29
@@ -956,6 +1070,8 @@ module.exports = {
   rarityString: rarityString,
   emoji_eternalrebirthflame: emoji_eternalrebirthflame,
   emoji_redcube: emoji_redcube,
+  emoji_blackrebirthflame: emoji_blackrebirthflame,
+  emoji_blackcube: emoji_blackcube,
   itemStatString: itemStatString,
   itemStat: itemStat,
   getPlayerStat: getPlayerStat,
@@ -963,6 +1079,8 @@ module.exports = {
   setAdditionalOption: setAdditionalOption,
   randomPotentialOption: randomPotentialOption,
   setPotentialOption: setPotentialOption,
+  setServeralAdditionalOption: setServeralAdditionalOption,
+  setServeralPotentialOption: setServeralPotentialOption,
   getBossRewardItem: getBossRewardItem,
   manualUpdate: manualUpdate,
 }
