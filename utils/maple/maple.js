@@ -899,6 +899,7 @@ function setServeralPotentialOption(items, item, job, num){
   items.pop(item);
   var statAtkDefer = afterPlayerStat.statAtk - beforePlayerStat.statAtk;
   var maxPlayerStat = statAtkDefer;
+  // console.log("원스탯: " + maxPlayerStat);
   var resultItem = {
     rarity: item.rarity,
     potential1: item.potential1 ,
@@ -920,7 +921,9 @@ function setServeralPotentialOption(items, item, job, num){
     statAtkDefer = afterPlayerStat.statAtk - beforePlayerStat.statAtk;
 
     if( statAtkDefer > maxPlayerStat || item.rarity > resultItem.rarity){
-      statAtkDefer = maxPlayerStat
+      // console.log("["+ num +"]스탯 증가량: " + maxPlayerStat +" -> " + statAtkDefer);
+
+      maxPlayerStat = statAtkDefer
       resultItem.rarity = po[0]
       resultItem.potential1 = po[1][0]
       resultItem.potential2 = po[1][1]
@@ -938,6 +941,8 @@ function setServeralAdditionalOption(items, item, job, num){
   items.pop(item);
   var statAtkDefer = afterPlayerStat.statAtk - beforePlayerStat.statAtk;
   var maxPlayerStat = statAtkDefer;
+  // console.log("원스탯: " + maxPlayerStat);
+
   var resultItem = {
     additionalstr: item.additionalstr,
     additionaldex: item.additionaldex,
@@ -956,7 +961,7 @@ function setServeralAdditionalOption(items, item, job, num){
     additionalallp: item.additionalallp
   }
   while(num--){
-     beforePlayerStat = getPlayerStat(items, job);
+    beforePlayerStat = getPlayerStat(items, job);
 
     var ao = setAdditionalOption(item.type);
     item.additionalstr = ao["str"];
@@ -981,7 +986,9 @@ function setServeralAdditionalOption(items, item, job, num){
     statAtkDefer = afterPlayerStat.statAtk - beforePlayerStat.statAtk;
 
     if( statAtkDefer > maxPlayerStat){
-      statAtkDefer = maxPlayerStat
+      // console.log("["+ num +"]스탯 증가량: " + maxPlayerStat +" -> " + statAtkDefer);
+
+      maxPlayerStat = statAtkDefer
       resultItem.additionalstr = ao["str"];
       resultItem.additionaldex = ao["dex"];
       resultItem.additionalint = ao["int"];
@@ -998,7 +1005,6 @@ function setServeralAdditionalOption(items, item, job, num){
       resultItem.additionaldmg = ao["dmg"];
       resultItem.additionalallp = ao["allp"];
     }
-    return resultItem;
   }
   return resultItem;
 }
